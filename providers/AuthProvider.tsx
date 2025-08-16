@@ -6,8 +6,9 @@ import {
   type ReactNode,
 } from 'react';
 
-import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+
+import type { Session, User } from '@supabase/supabase-js';
 
 type Ctx = {
   session: Session | null;
@@ -25,11 +26,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     supabase.auth
       .getSession()
-      .then(({ data }) => setSession(data.session ?? null));
+      .then(({ data }) => setSession(data.session ?? null))
+      .catch((error) => {
+        console.error('Supabase getSession failed:', error);
+        setSession(null);
+      });
+
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) =>
       setSession(s),
     );
-    return () => sub.subscription.unsubscribe();
+
+    return () => sub?.subscription?.unsubscribe();
   }, []);
 
   const signIn: Ctx['signIn'] = async (email, password) => {

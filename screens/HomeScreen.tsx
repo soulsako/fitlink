@@ -1,14 +1,12 @@
-import React from 'react';
-
 import { View, Text, Pressable, Alert } from 'react-native';
 
-import { supabase } from './lib/supabase';
-import { AuthProvider, useAuth } from './providers/AuthProvider';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../providers/AuthProvider';
 
-function Home(): React.ReactElement {
+export default function HomeScreen() {
   const { user, signOut } = useAuth();
 
-  const testQuery = async (): Promise<void> => {
+  const testQuery = async () => {
     const { data, error } = await supabase
       .from('profiles')
       .select('id')
@@ -41,13 +39,5 @@ function Home(): React.ReactElement {
         <Text className="text-white font-semibold">Sign Out</Text>
       </Pressable>
     </View>
-  );
-}
-
-export default function App(): React.ReactElement {
-  return (
-    <AuthProvider>
-      <Home />
-    </AuthProvider>
   );
 }

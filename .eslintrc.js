@@ -1,18 +1,21 @@
-// eslint-disable-next-line no-undef
+// .eslintrc.js (after)
 module.exports = {
   root: true,
   env: { es2021: true, node: true, jest: true },
   settings: {
     react: { version: 'detect' },
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx', '.d.ts'],
+    },
+    // ✅ remove the TS resolver to avoid "invalid interface loaded as resolver"
     'import/resolver': {
       node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
-      typescript: {},
     },
-    jest: { version: 29 }, // ✅ explicitly tell eslint-plugin-jest which version to use
+    jest: { version: 29 },
     'testing-library/utils-module': '@testing-library/react-native',
   },
   ignorePatterns: [
-    '.eslintrc.js', // ✅ don't lint your ESLint config file
+    '.eslintrc.js',
     'node_modules/',
     'dist/',
     'build/',
@@ -27,7 +30,6 @@ module.exports = {
     '@react-native',
     'plugin:react-hooks/recommended',
     'plugin:import/recommended',
-    'plugin:import/typescript',
     'plugin:promise/recommended',
     'plugin:testing-library/react',
     'plugin:jest/recommended',
@@ -69,7 +71,6 @@ module.exports = {
         ],
         pathGroups: [
           { pattern: 'react', group: 'external', position: 'before' },
-          { pattern: '@/**', group: 'internal' },
         ],
         pathGroupsExcludedImportTypes: ['react'],
         alphabetize: { order: 'asc', caseInsensitive: true },
@@ -96,19 +97,18 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.ts', '**/*.tsx'],
+      files: ['**/*.ts', '**/*.tsx', '**/*.d.ts'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
         project: ['./tsconfig.json'],
         tsconfigRootDir: __dirname,
-        ecmaVersion: 2021,
-        sourceType: 'module',
       },
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
       ],
       rules: {
+        'import/namespace': 'off',
         '@typescript-eslint/no-unused-vars': [
           'error',
           {

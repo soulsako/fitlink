@@ -24,10 +24,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "EXPO_PUBLIC_SUPABASE_URL": "https://YOUR-PROJECT.supabase.co",
-      "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR-ANON-KEY"
     }
   }
 }
