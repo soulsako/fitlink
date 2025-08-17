@@ -1,25 +1,25 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert } from 'react-native'
 
-import { useAuth } from '../providers/AuthProvider';
+import { useAuth } from '../providers/AuthProvider'
 
 export default function SignUpScreen() {
-  const { signUp } = useAuth();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const { signUp } = useAuth()
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
 
   const onSubmit = async () => {
-    const err = await signUp(email.trim(), password);
+    const err = await signUp(email.trim(), password)
     if (err) {
-      Alert.alert('Sign up failed', err.message);
+      Alert.alert('Sign up failed', err.message)
     } else {
       Alert.alert(
         'Check your email',
         'Confirm your account to complete sign up.',
-      );
+      )
     }
-  };
+  }
 
   return (
     <View className="flex-1 justify-center px-4">
@@ -32,8 +32,8 @@ export default function SignUpScreen() {
         autoCapitalize="none"
         keyboardType="email-address"
         value={email}
-        onChangeText={(t) => {
-          setEmail(t);
+        onChangeText={t => {
+          setEmail(t)
         }}
       />
 
@@ -43,8 +43,8 @@ export default function SignUpScreen() {
         placeholderTextColor="#9ca3af"
         secureTextEntry
         value={password}
-        onChangeText={(t) => {
-          setPassword(t);
+        onChangeText={t => {
+          setPassword(t)
         }}
       />
 
@@ -55,5 +55,5 @@ export default function SignUpScreen() {
         <Text className="text-white font-semibold">Sign Up</Text>
       </Pressable>
     </View>
-  );
+  )
 }

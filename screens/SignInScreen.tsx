@@ -1,22 +1,22 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert } from 'react-native'
 
-import { useAuth } from '../providers/AuthProvider';
+import { useAuth } from '../providers/AuthProvider'
 
 export default function SignInScreen() {
-  const { signIn } = useAuth();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const { signIn } = useAuth()
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
 
   const onSubmit = async () => {
-    const err = await signIn(email.trim(), password);
+    const err = await signIn(email.trim(), password)
     if (err) {
-      Alert.alert('Sign in failed', err.message);
+      Alert.alert('Sign in failed', err.message)
     } else {
-      Alert.alert('Signed in', 'You are signed in.');
+      Alert.alert('Signed in', 'You are signed in.')
     }
-  };
+  }
 
   return (
     <View className="flex-1 justify-center px-4">
@@ -29,8 +29,8 @@ export default function SignInScreen() {
         autoCapitalize="none"
         keyboardType="email-address"
         value={email}
-        onChangeText={(t) => {
-          setEmail(t);
+        onChangeText={t => {
+          setEmail(t)
         }}
       />
 
@@ -40,8 +40,8 @@ export default function SignInScreen() {
         placeholderTextColor="#9ca3af"
         secureTextEntry
         value={password}
-        onChangeText={(t) => {
-          setPassword(t);
+        onChangeText={t => {
+          setPassword(t)
         }}
       />
 
@@ -52,5 +52,5 @@ export default function SignInScreen() {
         <Text className="text-white font-semibold">Sign In</Text>
       </Pressable>
     </View>
-  );
+  )
 }

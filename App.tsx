@@ -1,57 +1,57 @@
-import type React from 'react';
+import type React from 'react'
 
-import { useColorScheme } from 'nativewind';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { useColorScheme } from 'nativewind'
+import { View, Text, Pressable, Alert } from 'react-native'
 
-import { supabase } from './lib/supabase';
-import { AuthProvider, useAuth } from './providers/AuthProvider';
+import { supabase } from './lib/supabase'
+import { AuthProvider, useAuth } from './providers/AuthProvider'
 
 function Home(): React.ReactElement {
-  const { user, signOut } = useAuth();
-  const { colorScheme, setColorScheme } = useColorScheme();
+  const { user, signOut } = useAuth()
+  const { colorScheme, setColorScheme } = useColorScheme()
 
   const toggleTheme = (): void => {
     if (colorScheme === 'dark') {
-      setColorScheme('light');
+      setColorScheme('light')
     } else {
-      setColorScheme('dark');
+      setColorScheme('dark')
     }
-  };
+  }
 
   const toMessage = (err: unknown): string => {
     if (typeof err === 'string') {
-      return err;
+      return err
     }
     if (err instanceof Error) {
-      return err.message;
+      return err.message
     }
     if (err && typeof err === 'object') {
       try {
-        return JSON.stringify(err, null, 2);
+        return JSON.stringify(err, null, 2)
       } catch {
-        return String(err);
+        return String(err)
       }
     }
-    return String(err);
-  };
+    return String(err)
+  }
 
   const testQuery = async (): Promise<void> => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('id')
-        .limit(1);
+        .limit(1)
       if (error) {
-        throw error;
+        throw error
       }
       Alert.alert(
         'Supabase test OK',
         `profiles rows visible: ${data?.length ?? 0}`,
-      );
+      )
     } catch (err: unknown) {
-      Alert.alert('Supabase test failed', toMessage(err));
+      Alert.alert('Supabase test failed', toMessage(err))
     }
-  };
+  }
 
   return (
     <View className="flex-1 items-center justify-center px-4 bg-white dark:bg-black">
@@ -82,7 +82,7 @@ function Home(): React.ReactElement {
         </Text>
       </Pressable>
     </View>
-  );
+  )
 }
 
 export default function App(): React.ReactElement {
@@ -90,5 +90,5 @@ export default function App(): React.ReactElement {
     <AuthProvider>
       <Home />
     </AuthProvider>
-  );
+  )
 }
