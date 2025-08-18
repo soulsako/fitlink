@@ -2,7 +2,12 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "types": ["nativewind", "react", "react-native"]
+    "jsx": "react-jsx",
+    "types": ["react", "react-native"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
   },
   "exclude": [
     "node_modules",
