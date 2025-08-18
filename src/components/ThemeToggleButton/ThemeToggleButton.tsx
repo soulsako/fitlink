@@ -1,11 +1,11 @@
-import React from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { useTheme } from '../../theme/ThemeContext';
-import { makeStyles } from './styles';
+import React from 'react'
+import { Pressable, Text, View } from 'react-native'
+import { useTheme } from '../../theme/ThemeContext'
+import { makeStyles } from './styles'
 
 export default function ThemeToggleButton() {
-  const { scheme, toggleScheme, theme } = useTheme();
-  const styles = makeStyles(theme);
+  const { scheme, toggleScheme, theme } = useTheme()
+  const styles = makeStyles(theme)
 
   return (
     <View style={styles.wrapper}>
@@ -15,5 +15,5 @@ export default function ThemeToggleButton() {
         </Text>
       </Pressable>
     </View>
-  );
+  )
 }

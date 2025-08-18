@@ -1,15 +1,15 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-import { useAuth } from '../providers/AuthProvider';
-import HomeScreen from '../screens/HomeScreen/HomeScreen';
-import SignInScreen from '../screens/SignInScreen';
-import SignUpScreen from '../screens/SignUpScreen';
+import { useAuth } from '../providers/AuthProvider'
+import HomeScreen from '../screens/HomeScreen/HomeScreen'
+import SignInScreen from '../screens/SignInScreen'
+import SignUpScreen from '../screens/SignUpScreen'
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator()
 
 export default function RootNav() {
-  const { session } = useAuth();
+  const { session } = useAuth()
 
   return (
     <NavigationContainer>
@@ -36,5 +36,5 @@ export default function RootNav() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  )
 }
