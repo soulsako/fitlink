@@ -1,5 +1,4 @@
-// app.config.ts
-import { ConfigContext, ExpoConfig } from '@expo/config'
+import type { ConfigContext, ExpoConfig } from '@expo/config'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -23,7 +22,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ITSAppUsesNonExemptEncryption: false, // ✅ standard/exempt only
     },
   },
-  // app.config.ts (android block)
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
@@ -37,7 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   extra: {
     eas: {
-      projectId: 'd3864dca-2bae-4e0e-bf03-ef22a7fa90d0', // ✅ add this
+      projectId: 'd3864dca-2bae-4e0e-bf03-ef22a7fa90d0',
     },
     EXPO_PUBLIC_SUPABASE_URL: 'https://eagknyqkytgjcxgevbre.supabase.co',
     EXPO_PUBLIC_SUPABASE_ANON_KEY:
