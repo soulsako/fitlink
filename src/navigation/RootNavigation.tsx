@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from 'react-native-paper';
-
+import LoadingScreen from '../components/LoadingScreen';
 import { useAuth } from '../providers/AuthProvider';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
@@ -101,8 +101,7 @@ export default function RootNavigation() {
   const { session, loading } = useAuth();
 
   if (loading) {
-    // You can add a loading screen component here
-    return null;
+    return <LoadingScreen />;
   }
 
   return (
