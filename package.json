@@ -10,7 +10,7 @@
     "web": "cross-env NODE_ENV=development expo start --web",
     "lint": "biome lint .",
     "format": "biome format . --write",
-    "check-format": "biome format . --write",
+    "check-format": "biome format . --check",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -22,8 +22,6 @@
     "expo": "~53.0.20",
     "expo-dev-client": "~5.2.4",
     "expo-status-bar": "~2.2.3",
-    "expo-auth-session": "~6.1.1",
-    "expo-crypto": "~13.0.2",
     "expo-web-browser": "~14.0.2",
     "react": "19.0.0",
     "react-native": "0.79.5",

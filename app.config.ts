@@ -2,43 +2,39 @@ import type { ConfigContext, ExpoConfig } from '@expo/config'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'fitlink',
+  name: 'FitLink',
   slug: 'fitlink',
-  scheme: 'fitlink',
   version: '1.0.0',
   orientation: 'portrait',
-  newArchEnabled: true,
-  userInterfaceStyle: 'light',
   icon: './assets/icon.png',
+  userInterfaceStyle: 'automatic',
   splash: {
-    image: './assets/splash-icon.png',
+    image: './assets/splash.png',
     resizeMode: 'contain',
     backgroundColor: '#ffffff',
   },
+  assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.hamidmian.fitlink',
-    infoPlist: {
-      ITSAppUsesNonExemptEncryption: false, // ✅ standard/exempt only
-    },
+    scheme: 'fitlink',
   },
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#ffffff',
     },
-    edgeToEdgeEnabled: true, // ✅ correct key for SDK 53
     package: 'com.hamidmian.fitlink',
+    scheme: 'fitlink',
   },
   web: {
     favicon: './assets/favicon.png',
+    bundler: 'metro',
   },
+  scheme: 'fitlink',
+  plugins: ['expo-dev-client'],
   extra: {
-    eas: {
-      projectId: 'd3864dca-2bae-4e0e-bf03-ef22a7fa90d0',
-    },
-    EXPO_PUBLIC_SUPABASE_URL: 'https://eagknyqkytgjcxgevbre.supabase.co',
-    EXPO_PUBLIC_SUPABASE_ANON_KEY:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhZ2tueXFreXRnamN4Z2V2YnJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzNjQ1MjAsImV4cCI6MjA3MDk0MDUyMH0.5-AjmZzroWh_yiPWC_ERmQbKkhuJkF98YH5Yf0R6s64',
+    EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
+    EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
   },
 })
