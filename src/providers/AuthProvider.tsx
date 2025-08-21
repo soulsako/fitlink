@@ -128,9 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       });
 
-      if (error) {
-        return error;
-      }
+      if (error) return error;
 
       // Open the OAuth URL in the browser
       const result = await WebBrowser.openAuthSessionAsync(
@@ -146,16 +144,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const accessToken = params.get('access_token');
         const refreshToken = params.get('refresh_token');
+        const expiresIn = params.get('expires_in');
+        const tokenType = params.get('token_type');
 
         if (accessToken) {
-          const { data, error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken || '',
-          });
+          const { data: sessionData, error: sessionError } =
+            await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken || '',
+            });
 
-          if (sessionError) {
-            return sessionError;
-          }
+          if (sessionError) return sessionError;
 
           // Session will be automatically updated via the auth state change listener
           return null;

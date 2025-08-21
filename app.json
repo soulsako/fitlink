@@ -7,11 +7,15 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "fitlink",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hamidmian.fitlink",
@@ -20,6 +24,7 @@
       }
     },
     "android": {
+      "package": "com.hamidmian.fitlink",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,8 +32,12 @@
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
+    "plugins": [
+      "expo-dev-client"
+    ],
     "extra": {
       "EXPO_PUBLIC_SUPABASE_URL": "https://eagknyqkytgjcxgevbre.supabase.co",
       "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhZ2tueXFreXRnamN4Z2V2YnJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzNjQ1MjAsImV4cCI6MjA3MDk0MDUyMH0.5-AjmZzroWh_yiPWC_ERmQbKkhuJkF98YH5Yf0R6s64",
