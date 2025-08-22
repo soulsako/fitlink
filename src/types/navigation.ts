@@ -1,18 +1,25 @@
+// src/types/navigation.ts
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-// Auth Stack
+// Auth Stack - Updated for LocalMind onboarding flow
 export type AuthStackParamList = {
+  Welcome: undefined
   SignIn: undefined
   SignUp: undefined
   ForgotPassword: undefined
   ResetPassword: { token?: string }
+  LocationPermission: undefined
+  AddressConfirmation: { coordinates?: { latitude: number; longitude: number } }
+  PhoneVerification: undefined
+  CodeVerification: { phoneNumber: string }
 }
 
-// Main Tab Stack
+// Main Tab Stack - Updated for LocalMind features
 export type MainTabParamList = {
   Home: undefined
-  Explore: undefined
+  Services: undefined
+  Messages: undefined
   Profile: undefined
 }
 

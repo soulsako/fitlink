@@ -1,19 +1,21 @@
+// src/navigation/RootNavigation.tsx
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useTheme } from 'react-native-paper';
 import LoadingScreen from '../components/LoadingScreen';
 import { useAuth } from '../providers/AuthProvider';
+import { useTheme } from '../providers/ThemeProvider';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
-// Auth Screens
 import SignInScreen from '../screens/auth/SignInScreen';
 import SignUpScreen from '../screens/auth/SignUpScreen';
-import ExploreScreen from '../screens/ExploreScreen/ExploreScreen';
 // Main Screens
-import HomeScreen from '../screens/HomeScreen/HomeScreen';
-import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
+import MessagesScreen from '../screens/MessagesScreen/MessagesScreen';
+import AddressConfirmationScreen from '../screens/onboarding/AddressConfirmationScreen';
+// Auth Screens
+import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
+import ServicesScreen from '../screens/ServicesScreen/ServicesScreen';
 
 import type {
   AuthStackParamList,
@@ -31,7 +33,9 @@ function AuthNavigator() {
       screenOptions={{
         headerShown: false,
       }}
+      initialRouteName="Welcome"
     >
+      <AuthStack.Screen name="Welcome" component={WelcomeScreen} />
       <AuthStack.Screen name="SignIn" component={SignInScreen} />
       <AuthStack.Screen name="SignUp" component={SignUpScreen} />
       <AuthStack.Screen
@@ -39,12 +43,28 @@ function AuthNavigator() {
         component={ForgotPasswordScreen}
       />
       <AuthStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+      {/* <AuthStack.Screen
+        name="LocationPermission"
+        component={LocationPermissionScreen}
+      /> */}
+      <AuthStack.Screen
+        name="AddressConfirmation"
+        component={AddressConfirmationScreen}
+      />
+      {/* <AuthStack.Screen
+        name="PhoneVerification"
+        component={PhoneVerificationScreen}
+      /> */}
+      {/* <AuthStack.Screen
+        name="CodeVerification"
+        component={CodeVerificationScreen}
+      /> */}
     </AuthStack.Navigator>
   );
 }
 
 function MainNavigator() {
-  const theme = useTheme();
+  const { theme } = useTheme();
 
   return (
     <MainTab.Navigator
@@ -52,14 +72,21 @@ function MainNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap;
 
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Explore') {
-            iconName = 'explore';
-          } else if (route.name === 'Profile') {
-            iconName = 'person';
-          } else {
-            iconName = 'help';
+          switch (route.name) {
+            case 'Home':
+              iconName = 'home';
+              break;
+            case 'Services':
+              iconName = 'location-city';
+              break;
+            case 'Messages':
+              iconName = 'chat';
+              break;
+            case 'Profile':
+              iconName = 'person';
+              break;
+            default:
+              iconName = 'help';
           }
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
@@ -69,30 +96,39 @@ function MainNavigator() {
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.outline,
+          paddingBottom: 6,
+          paddingTop: 6,
+          height: 60,
         },
         headerStyle: {
           backgroundColor: theme.colors.surface,
         },
         headerTitleStyle: {
           color: theme.colors.onSurface,
+          fontFamily: 'Inter_600SemiBold',
         },
       })}
     >
-      <MainTab.Screen
+      {/* <MainTab.Screen
         name="Home"
         component={HomeScreen}
         options={{ title: 'Home' }}
+      /> */}
+      <MainTab.Screen
+        name="Services"
+        component={ServicesScreen}
+        options={{ title: 'Services' }}
       />
       <MainTab.Screen
-        name="Explore"
-        component={ExploreScreen}
-        options={{ title: 'Explore' }}
+        name="Messages"
+        component={MessagesScreen}
+        options={{ title: 'Messages' }}
       />
-      <MainTab.Screen
+      {/* <MainTab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{ title: 'Profile' }}
-      />
+      /> */}
     </MainTab.Navigator>
   );
 }

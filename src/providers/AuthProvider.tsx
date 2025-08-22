@@ -17,8 +17,23 @@ type UserProfile = {
   id: string;
   email: string;
   full_name: string;
-  user_type: 'customer' | 'trainer';
   avatar_url?: string;
+  postcode?: string;
+  council_area?: string;
+  phone_number?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  onboarding_completed: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+// Create a custom error type for profile operations
+type ProfileError = {
+  message: string;
+  code?: string;
 };
 
 type AuthContextType = {
@@ -32,6 +47,15 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<AuthError | null>;
   resetPassword: (password: string) => Promise<AuthError | null>;
+  updateProfile: (
+    updates: Partial<UserProfile>,
+  ) => Promise<ProfileError | null>;
+  completeOnboarding: (profileData: {
+    postcode: string;
+    council_area: string;
+    phone_number: string;
+    location?: { latitude: number; longitude: number };
+  }) => Promise<ProfileError | null>;
   refreshSession: () => Promise<void>;
 };
 
@@ -46,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchUserProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
@@ -108,7 +132,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       options: {
         data: {
           full_name: data.fullName,
-          user_type: data.userType,
         },
       },
     });
@@ -120,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'fitlink://auth-callback',
+          redirectTo: 'localmind://auth-callback',
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -128,12 +151,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       });
 
-      if (error) return error;
+      if (error) {
+        return error;
+      }
 
       // Open the OAuth URL in the browser
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
-        'fitlink://auth-callback',
+        'localmind://auth-callback',
       );
 
       if (result.type === 'success' && result.url) {
@@ -144,19 +169,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const accessToken = params.get('access_token');
         const refreshToken = params.get('refresh_token');
-        const expiresIn = params.get('expires_in');
-        const tokenType = params.get('token_type');
 
         if (accessToken) {
-          const { data: sessionData, error: sessionError } =
-            await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || '',
-            });
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          });
 
-          if (sessionError) return sessionError;
-
-          // Session will be automatically updated via the auth state change listener
+          if (sessionError) {
+            return sessionError;
+          }
           return null;
         }
       }
@@ -177,7 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
   ): Promise<AuthError | null> => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'fitlink://reset-password',
+      redirectTo: 'localmind://reset-password',
     });
     return error;
   };
@@ -187,6 +209,83 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: password,
     });
     return error;
+  };
+
+  const updateProfile = async (
+    updates: Partial<UserProfile>,
+  ): Promise<ProfileError | null> => {
+    if (!session?.user) {
+      return { message: 'No authenticated user' };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', session.user.id);
+
+      if (error) {
+        return {
+          message: error.message,
+          code: error.code,
+        };
+      }
+
+      // Refresh the profile
+      const updatedProfile = await fetchUserProfile(session.user.id);
+      setUserProfile(updatedProfile);
+
+      return null;
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      return { message: 'Failed to update profile' };
+    }
+  };
+
+  const completeOnboarding = async (profileData: {
+    postcode: string;
+    council_area: string;
+    phone_number: string;
+    location?: { latitude: number; longitude: number };
+  }): Promise<ProfileError | null> => {
+    if (!session?.user) {
+      return { message: 'No authenticated user' };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          postcode: profileData.postcode,
+          council_area: profileData.council_area,
+          phone_number: profileData.phone_number,
+          location: profileData.location
+            ? `POINT(${profileData.location.longitude} ${profileData.location.latitude})`
+            : null,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', session.user.id);
+
+      if (error) {
+        return {
+          message: error.message,
+          code: error.code,
+        };
+      }
+
+      // Refresh the profile
+      const updatedProfile = await fetchUserProfile(session.user.id);
+      setUserProfile(updatedProfile);
+
+      return null;
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      return { message: 'Failed to complete onboarding' };
+    }
   };
 
   const refreshSession = async (): Promise<void> => {
@@ -206,6 +305,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
         sendPasswordResetEmail,
         resetPassword,
+        updateProfile,
+        completeOnboarding,
         refreshSession,
       }}
     >

@@ -1,30 +1,42 @@
+import type React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Title, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import { useTheme } from '../providers/ThemeProvider';
 
-export default function LoadingScreen() {
-  const theme = useTheme();
+const LoadingScreen: React.FC = () => {
+  const { theme } = useTheme();
 
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <ActivityIndicator size="large" color={theme.colors.primary} />
-      <Title style={[styles.title, { color: theme.colors.primary }]}>
-        FitLink
-      </Title>
+      <Text
+        style={[
+          styles.loadingText,
+          {
+            color: theme.colors.onBackground,
+            fontFamily: 'System', // Use system font while Inter loads
+          },
+        ]}
+      >
+        Loading LocalMind...
+      </Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  loadingText: {
+    marginTop: 16,
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
+
+export default LoadingScreen;
