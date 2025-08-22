@@ -32,29 +32,42 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (saved === 'light' || saved === 'dark') {
           setSchemeState(saved);
         }
-      } catch {}
+      } catch (error) {
+        console.warn('Failed to load theme preference:', error);
+      }
     })();
   }, []);
 
-  const setScheme = (s: Scheme) => {
-    setSchemeState(s);
-    AsyncStorage.setItem(STORAGE_KEY, s).catch(() => {});
-  };
+  const setScheme = useMemo(
+    () => (s: Scheme) => {
+      setSchemeState(s);
+      AsyncStorage.setItem(STORAGE_KEY, s).catch((error) => {
+        console.warn('Failed to save theme preference:', error);
+      });
+    },
+    [],
+  );
 
-  const toggleScheme = () => setScheme(scheme === 'dark' ? 'light' : 'dark');
+  const toggleScheme = useMemo(
+    () => () => setScheme(scheme === 'dark' ? 'light' : 'dark'),
+    [scheme, setScheme],
+  );
 
   const theme = useMemo(
     () => (scheme === 'dark' ? darkTheme : lightTheme),
     [scheme],
   );
 
-  const value: ThemeContextValue = {
-    scheme,
-    isDark: scheme === 'dark',
-    theme,
-    setScheme,
-    toggleScheme,
-  };
+  const value: ThemeContextValue = useMemo(
+    () => ({
+      scheme,
+      isDark: scheme === 'dark',
+      theme,
+      setScheme,
+      toggleScheme,
+    }),
+    [scheme, theme, setScheme, toggleScheme],
+  );
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

@@ -8,7 +8,7 @@ import { AuthProvider } from './providers/AuthProvider';
 import { ThemeProvider, useTheme } from './providers/ThemeProvider';
 
 function AppContent() {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const fontsLoaded = useFonts();
 
   if (!fontsLoaded) {
@@ -18,7 +18,7 @@ function AppContent() {
   return (
     <PaperProvider theme={theme}>
       <AuthProvider>
-        <StatusBar style={theme.dark ? 'light' : 'dark'} />
+        <StatusBar style={isDark ? 'light' : 'dark'} />
         <RootNavigation />
       </AuthProvider>
     </PaperProvider>
