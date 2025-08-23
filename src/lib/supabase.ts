@@ -1,8 +1,7 @@
-import 'react-native-url-polyfill/auto'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import Constants from 'expo-constants'
-import { Alert } from 'react-native'
+import 'react-native-url-polyfill/auto'
 
 type PublicEnvKey = 'EXPO_PUBLIC_SUPABASE_URL' | 'EXPO_PUBLIC_SUPABASE_ANON_KEY'
 type ExtraRecord = Partial<Record<PublicEnvKey, unknown>>
@@ -31,9 +30,6 @@ function requireEnv(key: PublicEnvKey): string {
     `Missing ${key}. Define it in .env and expose via app.config.ts -> extra.`,
   )
 }
-
-Alert.alert(requireEnv('EXPO_PUBLIC_SUPABASE_URL'))
-Alert.alert(requireEnv('EXPO_PUBLIC_SUPABASE_ANON_KEY'))
 
 export const SUPABASE_URL: string = requireEnv('EXPO_PUBLIC_SUPABASE_URL')
 export const SUPABASE_ANON_KEY: string = requireEnv(

@@ -15,7 +15,6 @@ import MessagesScreen from '../screens/MessagesScreen/MessagesScreen';
 import AddressConfirmationScreen from '../screens/onboarding/AddressConfirmationScreen';
 // Auth Screens
 import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
-import ServicesScreen from '../screens/ServicesScreen/ServicesScreen';
 
 import type {
   AuthStackParamList,
@@ -115,8 +114,8 @@ function MainNavigator() {
         options={{ title: 'Home' }}
       /> */}
       <MainTab.Screen
-        name="Services"
-        component={ServicesScreen}
+        name="Welcome"
+        component={WelcomeScreen}
         options={{ title: 'Services' }}
       />
       <MainTab.Screen
@@ -143,7 +142,7 @@ export default function RootNavigation() {
   return (
     <NavigationContainer>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {session ? (
+        {!session ? (
           <RootStack.Screen name="Main" component={MainNavigator} />
         ) : (
           <RootStack.Screen name="Auth" component={AuthNavigator} />

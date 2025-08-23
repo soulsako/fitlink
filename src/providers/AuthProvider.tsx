@@ -1,4 +1,5 @@
 import type { AuthError, Session, User } from '@supabase/supabase-js';
+import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import {
   createContext,
@@ -8,6 +9,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { Platform } from 'react-native';
 import { supabase } from '../lib/supabase';
 import type { SignUpFormData } from '../schemas/authSchemas';
 
@@ -30,7 +32,6 @@ type UserProfile = {
   updated_at: string;
 };
 
-// Create a custom error type for profile operations
 type ProfileError = {
   message: string;
   code?: string;
@@ -66,7 +67,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile
+  const redirectTo = AuthSession.makeRedirectUri({
+    scheme: 'fitlink',
+    path: 'auth-callback',
+  });
+
+  const signOut = useCallback(async (): Promise<void> => {
+    await supabase.auth.signOut();
+    setUserProfile(null);
+  }, []);
+
   const fetchUserProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
@@ -76,19 +86,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (error) {
-        console.error('Error fetching user profile:', error);
         return null;
       }
 
       return data as UserProfile;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
+    } catch {
       return null;
     }
   }, []);
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
@@ -97,7 +104,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -140,66 +146,93 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async (): Promise<AuthError | null> => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'localmind://auth-callback',
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
+      setLoading(true);
+
+      if (Platform.OS === 'web') {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
           },
-        },
-      });
+        });
 
-      if (error) {
-        return error;
-      }
+        if (error) return error;
+        return null;
+      } else {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            },
+          },
+        });
 
-      // Open the OAuth URL in the browser
-      const result = await WebBrowser.openAuthSessionAsync(
-        data.url,
-        'localmind://auth-callback',
-      );
+        if (error) return error;
 
-      if (result.type === 'success' && result.url) {
-        // Handle the callback URL
-        const url = new URL(result.url);
-        const fragment = url.hash.substring(1);
-        const params = new URLSearchParams(fragment);
+        if (data?.url) {
+          const result = await WebBrowser.openAuthSessionAsync(
+            data.url,
+            redirectTo,
+          );
 
-        const accessToken = params.get('access_token');
-        const refreshToken = params.get('refresh_token');
+          if (result.type === 'success' && result.url) {
+            const url = new URL(result.url);
+            let accessToken: string | null = null;
+            let refreshToken: string | null = null;
 
-        if (accessToken) {
-          const { error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken || '',
-          });
+            if (
+              url.searchParams.has('access_token') ||
+              url.hash.includes('access_token')
+            ) {
+              if (url.hash) {
+                const hashParams = new URLSearchParams(url.hash.substring(1));
+                accessToken = hashParams.get('access_token');
+                refreshToken = hashParams.get('refresh_token');
+              }
 
-          if (sessionError) {
-            return sessionError;
+              if (!accessToken) {
+                accessToken = url.searchParams.get('access_token');
+                refreshToken = url.searchParams.get('refresh_token');
+              }
+
+              if (accessToken) {
+                const { error: sessionError } = await supabase.auth.setSession({
+                  access_token: accessToken,
+                  refresh_token: refreshToken || '',
+                });
+
+                if (sessionError) return sessionError;
+                return null;
+              }
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const { data: sessionData } = await supabase.auth.getSession();
+            if (sessionData.session) {
+              return null;
+            }
+          } else if (result.type === 'cancel') {
+            return { message: 'Google sign in was cancelled' } as AuthError;
           }
-          return null;
         }
+
+        return { message: 'Google sign in failed' } as AuthError;
       }
-
-      return { message: 'Google sign in was cancelled or failed' } as AuthError;
-    } catch (error) {
-      console.error('Google sign in error:', error);
+    } catch {
       return { message: 'Failed to sign in with Google' } as AuthError;
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const signOut = async (): Promise<void> => {
-    await supabase.auth.signOut();
-    setUserProfile(null);
   };
 
   const sendPasswordResetEmail = async (
     email: string,
   ): Promise<AuthError | null> => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'localmind://reset-password',
+      redirectTo: 'fitlink://reset-password',
     });
     return error;
   };
@@ -234,13 +267,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
       }
 
-      // Refresh the profile
       const updatedProfile = await fetchUserProfile(session.user.id);
       setUserProfile(updatedProfile);
 
       return null;
-    } catch (error) {
-      console.error('Error updating profile:', error);
+    } catch {
       return { message: 'Failed to update profile' };
     }
   };
@@ -277,13 +308,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
       }
 
-      // Refresh the profile
       const updatedProfile = await fetchUserProfile(session.user.id);
       setUserProfile(updatedProfile);
 
       return null;
-    } catch (error) {
-      console.error('Error completing onboarding:', error);
+    } catch {
       return { message: 'Failed to complete onboarding' };
     }
   };
