@@ -86,7 +86,7 @@ export const colors = {
     // Additional colors
     outline: '#E0E0E0',
     outlineVariant: '#F5F5F5',
-    shadow: '#000000',
+    shadow: 'transparent',
     scrim: '#000000',
     inverseSurface: '#2E2E2E',
     inverseOnSurface: '#F5F5F5',
@@ -153,7 +153,7 @@ export const colors = {
     // Additional colors
     outline: '#424242',
     outlineVariant: '#2E2E2E',
-    shadow: '#000000',
+    shadow: 'transparent',
     scrim: '#000000',
     inverseSurface: '#E0E0E0',
     inverseOnSurface: '#1E1E1E',
@@ -269,13 +269,29 @@ export const lightTheme = {
       fontWeight: '500' as const,
     },
   },
-  colors: colors.light,
+  colors: { ...colors.light, shadow: 'transparent' },
+  elevation: {
+    level0: 0,
+    level1: 0,
+    level2: 0,
+    level3: 0,
+    level4: 0,
+    level5: 0,
+  },
 }
 
 export const darkTheme = {
   ...MD3DarkTheme,
-  fonts: lightTheme.fonts, // Use same font configuration
-  colors: colors.dark,
+  fonts: lightTheme.fonts,
+  colors: { ...colors.dark, shadow: 'transparent' },
+  elevation: {
+    level0: 0,
+    level1: 0,
+    level2: 0,
+    level3: 0,
+    level4: 0,
+    level5: 0,
+  },
 }
 
 export type Theme = typeof lightTheme

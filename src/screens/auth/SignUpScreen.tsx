@@ -7,10 +7,8 @@ import {
   Button,
   Card,
   Divider,
-  Paragraph,
-  RadioButton,
+  Text,
   TextInput,
-  Title,
   useTheme,
 } from 'react-native-paper';
 
@@ -39,7 +37,6 @@ export default function SignUpScreen({ navigation }: Props) {
       password: '',
       confirmPassword: '',
       fullName: '',
-      userType: 'customer',
     },
   });
 
@@ -90,14 +87,17 @@ export default function SignUpScreen({ navigation }: Props) {
     >
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={[styles.title, { color: theme.colors.primary }]}>
-            Join FitLink
-          </Title>
-          <Paragraph
+          <Text
+            variant="titleLarge"
+            style={[styles.title, { color: theme.colors.primary }]}
+          >
+            Join Local Mind
+          </Text>
+          <Text
             style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
           >
             Create your account to get started
-          </Paragraph>
+          </Text>
 
           <View style={styles.form}>
             <Controller
@@ -118,11 +118,9 @@ export default function SignUpScreen({ navigation }: Props) {
               )}
             />
             {errors.fullName && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
-              >
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>
                 {errors.fullName.message}
-              </Paragraph>
+              </Text>
             )}
 
             <Controller
@@ -144,11 +142,9 @@ export default function SignUpScreen({ navigation }: Props) {
               )}
             />
             {errors.email && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
-              >
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>
                 {errors.email.message}
-              </Paragraph>
+              </Text>
             )}
 
             <Controller
@@ -175,11 +171,9 @@ export default function SignUpScreen({ navigation }: Props) {
               )}
             />
             {errors.password && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
-              >
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>
                 {errors.password.message}
-              </Paragraph>
+              </Text>
             )}
 
             <Controller
@@ -208,51 +202,10 @@ export default function SignUpScreen({ navigation }: Props) {
               )}
             />
             {errors.confirmPassword && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
-              >
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>
                 {errors.confirmPassword.message}
-              </Paragraph>
+              </Text>
             )}
-
-            <View style={styles.userTypeContainer}>
-              <Paragraph
-                style={[
-                  styles.userTypeLabel,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                I am a:
-              </Paragraph>
-              <Controller
-                control={control}
-                name="userType"
-                render={({ field: { onChange, value } }) => (
-                  <RadioButton.Group onValueChange={onChange} value={value}>
-                    <View style={styles.radioOption}>
-                      <RadioButton value="customer" />
-                      <Paragraph style={{ color: theme.colors.onSurface }}>
-                        Customer looking for trainers
-                      </Paragraph>
-                    </View>
-                    <View style={styles.radioOption}>
-                      <RadioButton value="trainer" />
-                      <Paragraph style={{ color: theme.colors.onSurface }}>
-                        Personal trainer offering services
-                      </Paragraph>
-                    </View>
-                  </RadioButton.Group>
-                )}
-              />
-              {errors.userType && (
-                <Paragraph
-                  style={[styles.errorText, { color: theme.colors.error }]}
-                >
-                  {errors.userType.message}
-                </Paragraph>
-              )}
-            </View>
-
             <Button
               mode="contained"
               onPress={handleSubmit(onSignUp)}
@@ -283,9 +236,9 @@ export default function SignUpScreen({ navigation }: Props) {
             </Button>
 
             <View style={styles.signInContainer}>
-              <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
+              <Text style={{ color: theme.colors.onSurfaceVariant }}>
                 Already have an account?{' '}
-              </Paragraph>
+              </Text>
               <Button
                 mode="text"
                 onPress={() => navigation.navigate('SignIn')}

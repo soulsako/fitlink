@@ -43,6 +43,17 @@
         "NODE_ENV": "development",
         "JAVA_VERSION": "17"
       }
+    },
+    "ios-dev-client": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "NODE_ENV": "development",
+        "JAVA_VERSION": "17"
+      }
     }
   },
   "submit": {

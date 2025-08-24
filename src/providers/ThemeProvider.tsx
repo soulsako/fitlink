@@ -1,5 +1,3 @@
-// src/providers/ThemeProvider.tsx
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
