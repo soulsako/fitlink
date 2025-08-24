@@ -34,6 +34,15 @@
         "NODE_ENV": "production",
         "JAVA_VERSION": "17"
       }
+    },
+    "ios-simulator": {
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "NODE_ENV": "development",
+        "JAVA_VERSION": "17"
+      }
     }
   },
   "submit": {

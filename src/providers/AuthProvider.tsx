@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { AuthError, Session, User } from '@supabase/supabase-js';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
@@ -12,8 +13,6 @@ import {
 import { Platform } from 'react-native';
 import { supabase } from '../lib/supabase';
 import type { SignUpFormData } from '../schemas/authSchemas';
-
-WebBrowser.maybeCompleteAuthSession();
 
 type UserProfile = {
   id: string;
@@ -74,6 +73,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async (): Promise<void> => {
     await supabase.auth.signOut();
+    await AsyncStorage.clear(); // or remove only Supabase keys if you prefer
+    setSession(null); // ensure immediate UI switch
     setUserProfile(null);
   }, []);
 
@@ -106,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       if (session?.user) {
         const profile = await fetchUserProfile(session.user.id);
@@ -146,16 +147,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async (): Promise<AuthError | null> => {
     try {
-      setLoading(true);
-
       if (Platform.OS === 'web') {
-        const { data, error } = await supabase.auth.signInWithOAuth({
+        const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
             redirectTo: `${window.location.origin}/auth/callback`,
           },
         });
-
         if (error) return error;
         return null;
       } else {
@@ -183,48 +181,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             let accessToken: string | null = null;
             let refreshToken: string | null = null;
 
-            if (
-              url.searchParams.has('access_token') ||
-              url.hash.includes('access_token')
-            ) {
-              if (url.hash) {
-                const hashParams = new URLSearchParams(url.hash.substring(1));
-                accessToken = hashParams.get('access_token');
-                refreshToken = hashParams.get('refresh_token');
-              }
-
-              if (!accessToken) {
-                accessToken = url.searchParams.get('access_token');
-                refreshToken = url.searchParams.get('refresh_token');
-              }
-
-              if (accessToken) {
-                const { error: sessionError } = await supabase.auth.setSession({
-                  access_token: accessToken,
-                  refresh_token: refreshToken || '',
-                });
-
-                if (sessionError) return sessionError;
-                return null;
-              }
+            if (url.hash) {
+              const hashParams = new URLSearchParams(url.hash.substring(1));
+              accessToken = hashParams.get('access_token');
+              refreshToken = hashParams.get('refresh_token');
+            }
+            if (!accessToken) {
+              accessToken = url.searchParams.get('access_token');
+              refreshToken = url.searchParams.get('refresh_token');
             }
 
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            const { data: sessionData } = await supabase.auth.getSession();
-            if (sessionData.session) {
+            if (accessToken) {
+              const { error: sessionError } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken || '',
+              });
+              if (sessionError) return sessionError;
               return null;
             }
-          } else if (result.type === 'cancel') {
-            return { message: 'Google sign in was cancelled' } as AuthError;
           }
+
+          await new Promise((r) => setTimeout(r, 1000));
+          const { data: sessionData } = await supabase.auth.getSession();
+          if (sessionData.session) return null;
         }
 
         return { message: 'Google sign in failed' } as AuthError;
       }
     } catch {
       return { message: 'Failed to sign in with Google' } as AuthError;
-    } finally {
-      setLoading(false);
     }
   };
 

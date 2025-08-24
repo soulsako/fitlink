@@ -1,3 +1,5 @@
+import PrimaryButton from '@/components/ui/PrimaryButton';
+import { useAuth } from '@/providers/AuthProvider';
 import { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -61,6 +63,7 @@ const serviceCategories: ServiceCategory[] = [
 ];
 
 const ServicesScreen: React.FC<ServicesScreenProps> = ({ navigation }) => {
+  const { signOut } = useAuth();
   const theme = useTheme();
 
   const handleServicePress = (serviceId: string) => {
@@ -112,6 +115,12 @@ const ServicesScreen: React.FC<ServicesScreenProps> = ({ navigation }) => {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
+      <PrimaryButton
+        title="Signout"
+        onPress={() => {
+          signOut();
+        }}
+      />
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.colors.onBackground }]}>
           Government Services
