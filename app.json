@@ -4,12 +4,12 @@
     "slug": "fitlink",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/app/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "fitlink",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/images/app/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -26,13 +26,13 @@
     "android": {
       "package": "com.hamidmian.fitlink",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/app/icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/icons/app/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
