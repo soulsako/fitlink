@@ -113,12 +113,15 @@ export default function SignInScreen({ navigation }: Props) {
                     mode="outlined"
                     label="Email"
                     value={value}
+                    textContentType="password"
+                    secureTextEntry
                     onChangeText={onChange}
                     onBlur={onBlur}
+                    contentStyle={{ paddingTop: 12 }}
                     error={!!errors.email}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    autoComplete="email"
+                    autoComplete="password"
                     left={<TextInput.Icon icon="email" />}
                     style={styles.input}
                     theme={{
@@ -153,9 +156,11 @@ export default function SignInScreen({ navigation }: Props) {
                   <TextInput
                     mode="outlined"
                     label="Password"
+                    contentStyle={{ paddingTop: 12 }}
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
+                    dense
                     error={!!errors.password}
                     secureTextEntry={!showPassword}
                     autoComplete="password"
@@ -276,7 +281,7 @@ const styles = StyleSheet.create({
   },
   safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   centerContent: {
-    marginBottom: 50,
+    marginBottom: 25,
   },
   headingText: {
     fontSize: 36,
@@ -293,11 +298,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   formContainer: {
-    marginBottom: 100,
+    marginBottom: 40,
   },
   input: {
     backgroundColor: 'transparent',
     marginVertical: 8,
+    paddingTop: 8,
   },
   errorText: {
     fontSize: 12,
@@ -337,13 +343,14 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
   },
   dividerText: {
     marginHorizontal: 16,
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 14,
   },
+
   googleButton: {
     marginVertical: 8,
     backgroundColor: '#000000',
