@@ -17,7 +17,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.hamidmian.fitlink",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -36,8 +36,17 @@
       "bundler": "metro"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "developmentTeam": "8432C5N4BS"
+          }
+        }
+      ],
       "expo-dev-client",
       "expo-web-browser"
+      
     ],
     "extra": {
       "EXPO_PUBLIC_SUPABASE_URL": "https://judlddyqcaiixdzxtqta.supabase.co",

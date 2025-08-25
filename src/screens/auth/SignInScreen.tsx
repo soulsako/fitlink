@@ -2,17 +2,20 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import {
-  Button,
-  Card,
-  Divider,
-  Paragraph,
-  TextInput,
-  Title,
-  useTheme,
-} from 'react-native-paper';
+  Alert,
+  Dimensions,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Button, TextInput, useTheme } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+const { width, height } = Dimensions.get('window');
+
+import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '../../providers/AuthProvider';
 import { type SignInFormData, signInSchema } from '../../schemas/authSchemas';
 import type { AuthStackScreenProps } from '../../types/navigation';
@@ -67,188 +70,300 @@ export default function SignInScreen({ navigation }: Props) {
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      <Card style={styles.card}>
-        <Card.Content>
-          <Title style={[styles.title, { color: theme.colors.primary }]}>
-            Welcome Back
-          </Title>
-          <Paragraph
-            style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
-          >
-            Sign in to your FitLink account
-          </Paragraph>
+    <View style={styles.container}>
+      <ImageBackground
+        source={require('../../../assets/images/backgrounds/signin-background.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay} />
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.centerContent}>
+            <ThemedText
+              variant="headline"
+              size="large"
+              style={styles.headingText}
+              weight="bold"
+            >
+              Welcome Back
+            </ThemedText>
+            <ThemedText
+              variant="body"
+              size="small"
+              style={styles.subHeadingText}
+            >
+              Sign in to your
+            </ThemedText>
+            <ThemedText
+              variant="body"
+              size="small"
+              style={styles.subHeadingText}
+            >
+              Local Mind account
+            </ThemedText>
+          </View>
 
-          <View style={styles.form}>
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Email"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={!!errors.email}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  left={<TextInput.Icon icon="email" />}
-                  style={styles.input}
-                />
+          <View style={styles.bottomContent}>
+            <View style={styles.formContainer}>
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    mode="outlined"
+                    label="Email"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    error={!!errors.email}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    left={<TextInput.Icon icon="email" />}
+                    style={styles.input}
+                    theme={{
+                      colors: {
+                        onSurface: '#000000',
+                        onSurfaceVariant: '#000000',
+                        outline: '#000000',
+                        primary: '#000000',
+                        background: 'transparent',
+                        onSurfaceDisabled: '#000000',
+                        secondary: '#000000',
+                        onSecondary: '#000000',
+                        surfaceVariant: 'transparent',
+                      },
+                      roundness: 8,
+                    }}
+                    textColor="#000000"
+                    placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                  />
+                )}
+              />
+              {errors.email && (
+                <ThemedText style={styles.errorText}>
+                  {errors.email.message}
+                </ThemedText>
               )}
-            />
-            {errors.email && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
+
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    mode="outlined"
+                    label="Password"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    error={!!errors.password}
+                    secureTextEntry={!showPassword}
+                    autoComplete="password"
+                    left={<TextInput.Icon icon="lock" />}
+                    right={
+                      <TextInput.Icon
+                        icon={showPassword ? 'eye-off' : 'eye'}
+                        onPress={() => setShowPassword(!showPassword)}
+                      />
+                    }
+                    style={styles.input}
+                    theme={{
+                      colors: {
+                        onSurface: '#000000',
+                        onSurfaceVariant: '#000000',
+                        outline: '#000000',
+                        primary: '#000000',
+                        background: 'transparent',
+                        onSurfaceDisabled: '#000000',
+                        secondary: '#000000',
+                        onSecondary: '#000000',
+                        surfaceVariant: 'transparent',
+                      },
+                      roundness: 8,
+                    }}
+                    textColor="#000000"
+                    placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                  />
+                )}
+              />
+              {errors.password && (
+                <ThemedText style={styles.errorText}>
+                  {errors.password.message}
+                </ThemedText>
+              )}
+
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgotPassword')}
+                style={styles.forgotPasswordButton}
               >
-                {errors.email.message}
-              </Paragraph>
-            )}
+                <ThemedText
+                  variant="body"
+                  size="medium"
+                  style={styles.forgotPasswordText}
+                >
+                  Forgot Password?
+                </ThemedText>
+              </TouchableOpacity>
 
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Password"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={!!errors.password}
-                  secureTextEntry={!showPassword}
-                  autoComplete="password"
-                  left={<TextInput.Icon icon="lock" />}
-                  right={
-                    <TextInput.Icon
-                      icon={showPassword ? 'eye-off' : 'eye'}
-                      onPress={() => setShowPassword(!showPassword)}
-                    />
-                  }
-                  style={styles.input}
-                />
-              )}
-            />
-            {errors.password && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
-              >
-                {errors.password.message}
-              </Paragraph>
-            )}
-
-            <Button
-              mode="text"
-              onPress={() => navigation.navigate('ForgotPassword')}
-              style={styles.forgotPassword}
-            >
-              Forgot Password?
-            </Button>
-
-            <Button
-              mode="contained"
-              onPress={handleSubmit(onSignIn)}
-              loading={loading}
-              disabled={loading || googleLoading}
-              style={styles.signInButton}
-            >
-              Sign In
-            </Button>
-
-            <Divider style={styles.divider} />
-
-            <Button
-              mode="outlined"
-              onPress={onGoogleSignIn}
-              loading={googleLoading}
-              disabled={loading || googleLoading}
-              icon={() => (
-                <MaterialIcons
-                  name="login"
-                  size={20}
-                  color={theme.colors.primary}
-                />
-              )}
-              style={styles.googleButton}
-            >
-              Continue with Google
-            </Button>
-
-            <View style={styles.signUpContainer}>
-              <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
-                Don't have an account?{' '}
-              </Paragraph>
               <Button
-                mode="text"
-                onPress={() => navigation.navigate('SignUp')}
-                compact
+                mode="contained"
+                onPress={handleSubmit(onSignIn)}
+                loading={loading}
+                disabled={loading || googleLoading}
+                style={[
+                  styles.signInButton,
+                  { backgroundColor: theme.colors.tertiary },
+                ]}
+                labelStyle={styles.signInButtonLabel}
+                contentStyle={styles.buttonContent}
               >
-                Sign Up
+                Sign In
+              </Button>
+
+              <View style={styles.dividerContainer}>
+                <View style={styles.dividerLine} />
+                <ThemedText style={styles.dividerText}>or</ThemedText>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <Button
+                mode="contained"
+                onPress={onGoogleSignIn}
+                loading={googleLoading}
+                disabled={loading || googleLoading}
+                icon={() => (
+                  <MaterialIcons name="login" size={20} color="#000000" />
+                )}
+                style={styles.googleButton}
+                labelStyle={styles.googleButtonLabel}
+                contentStyle={styles.buttonContent}
+              >
+                Continue with Google
               </Button>
             </View>
+
+            <View style={styles.footer}>
+              <ThemedText
+                variant="body"
+                size="medium"
+                style={[styles.footerText, { color: '#FFFFFF' }]}
+              >
+                Don't have an account?{' '}
+              </ThemedText>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                <ThemedText
+                  variant="body"
+                  size="medium"
+                  style={[styles.signUpText, { color: '#FFFFFF' }]}
+                >
+                  Sign Up
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
           </View>
-        </Card.Content>
-      </Card>
-    </ScrollView>
+        </SafeAreaView>
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { flex: 1 },
+  backgroundImage: { flex: 1, width, height },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  contentContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: 20,
+  safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  centerContent: {
+    marginBottom: 50,
   },
-  card: {
-    elevation: 4,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+  headingText: {
+    fontSize: 36,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 15,
   },
-  subtitle: {
+  subHeadingText: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 32,
+    lineHeight: 24,
   },
-  form: {
-    gap: 16,
+  bottomContent: {
+    paddingHorizontal: 60,
+    width: '100%',
+  },
+  formContainer: {
+    marginBottom: 100,
   },
   input: {
     backgroundColor: 'transparent',
+    marginVertical: 8,
   },
   errorText: {
     fontSize: 12,
-    marginTop: -12,
+    color: '#FF6B6B',
+    marginTop: 4,
     marginLeft: 12,
   },
-  forgotPassword: {
+  forgotPasswordButton: {
     alignSelf: 'flex-end',
-    marginTop: -8,
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  forgotPasswordText: {
+    color: '#000000',
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
   signInButton: {
-    marginTop: 8,
-    paddingVertical: 8,
+    marginVertical: 8,
+    borderRadius: 8,
+    height: 48,
   },
-  divider: {
+  signInButtonLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  buttonContent: {
+    height: 48,
+    paddingVertical: 0,
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 16,
   },
-  googleButton: {
-    paddingVertical: 8,
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#FFFFFF',
   },
-  signUpContainer: {
+  dividerText: {
+    marginHorizontal: 16,
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  googleButton: {
+    marginVertical: 8,
+    backgroundColor: '#000000',
+    borderRadius: 8,
+    height: 48,
+  },
+  googleButtonLabel: {
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
+  footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 16,
+  },
+  footerText: {
+    fontSize: 14,
+  },
+  signUpText: {
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
 });

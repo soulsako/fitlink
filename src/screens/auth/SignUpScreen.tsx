@@ -85,7 +85,7 @@ export default function SignUpScreen({ navigation }: Props) {
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
     >
-      <Card style={styles.card}>
+      <Card>
         <Card.Content>
           <Text
             variant="titleLarge"
@@ -262,9 +262,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
-  },
-  card: {
-    elevation: 4,
   },
   title: {
     fontSize: 28,

@@ -3,7 +3,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
 import {
   Dimensions,
-  Image,
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
@@ -43,18 +42,32 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContent}>
-            <Image
+            {/* <Image
               source={require('../../../assets/brand/logo/transparent.png')}
               style={styles.logo}
               resizeMode="contain"
-            />
+            /> */}
             <ThemedText
               variant="headline"
               size="large"
-              style={[styles.headingText, { color: '#FFFFFF' }]}
-              weight="semiBold"
+              style={styles.headingText}
+              weight="bold"
             >
-              Your Local AI
+              Local Mind
+            </ThemedText>
+            <ThemedText
+              variant="body"
+              size="small"
+              style={styles.subHeadingText}
+            >
+              Smart, secure sign-in to
+            </ThemedText>
+            <ThemedText
+              variant="body"
+              size="small"
+              style={styles.subHeadingText}
+            >
+              your community hub
             </ThemedText>
           </View>
 
@@ -126,25 +139,27 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  safeArea: { flex: 1, justifyContent: 'space-between', alignItems: 'center' },
+  safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   centerContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 50,
+  },
+  // logo: { width: 120, height: 120, marginBottom: 24 },
+  headingText: {
+    fontSize: 36,
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  subHeadingText: {
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  bottomContent: {
     paddingHorizontal: 24,
   },
-  logo: { width: 120, height: 120, marginBottom: 24 },
-  headingText: {
-    fontSize: 28,
-    lineHeight: 34,
-    textAlign: 'center',
-    marginBottom: 60,
-  },
-  bottomContent: { paddingHorizontal: 24, paddingBottom: 40 },
-  buttonContainer: { marginBottom: 30 },
+  buttonContainer: { marginBottom: 100 },
   socialButton: {
     marginVertical: 8,
-    elevation: 5,
   },
   footer: {
     flexDirection: 'row',
