@@ -1,16 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import {
-  Button,
-  Card,
-  Paragraph,
-  TextInput,
-  Title,
-  useTheme,
-} from 'react-native-paper';
+  Alert,
+  Dimensions,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Button, TextInput, useTheme } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+const { width, height } = Dimensions.get('window');
+
+import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '../../providers/AuthProvider';
 import {
   type ResetPasswordFormData,
@@ -65,149 +70,238 @@ export default function ResetPasswordScreen({ navigation }: Props) {
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <Card style={styles.card}>
-        <Card.Content>
-          <Title style={[styles.title, { color: theme.colors.primary }]}>
-            Set New Password
-          </Title>
-          <Paragraph
-            style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
+    <View style={styles.container}>
+      <ImageBackground
+        source={require('../../../assets/images/backgrounds/signin-background.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay} />
+        <SafeAreaView style={styles.safeArea}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
           >
-            Enter your new password below
-          </Paragraph>
-
-          <View style={styles.form}>
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="New Password"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={!!errors.password}
-                  secureTextEntry={!showPassword}
-                  autoComplete="new-password"
-                  left={<TextInput.Icon icon="lock" />}
-                  right={
-                    <TextInput.Icon
-                      icon={showPassword ? 'eye-off' : 'eye'}
-                      onPress={() => setShowPassword(!showPassword)}
-                    />
-                  }
-                  style={styles.input}
-                />
-              )}
-            />
-            {errors.password && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
+            <View style={styles.centerContent}>
+              <ThemedText
+                variant="headline"
+                size="large"
+                style={styles.headingText}
+                weight="bold"
               >
-                {errors.password.message}
-              </Paragraph>
-            )}
+                Set New Password
+              </ThemedText>
+              <ThemedText
+                variant="body"
+                size="small"
+                style={styles.subHeadingText}
+              >
+                Enter your new password
+              </ThemedText>
+              <ThemedText
+                variant="body"
+                size="small"
+                style={styles.subHeadingText}
+              >
+                below
+              </ThemedText>
+            </View>
 
-            <Controller
-              control={control}
-              name="confirmPassword"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Confirm New Password"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={!!errors.confirmPassword}
-                  secureTextEntry={!showConfirmPassword}
-                  autoComplete="new-password"
-                  left={<TextInput.Icon icon="lock-check" />}
-                  right={
-                    <TextInput.Icon
-                      icon={showConfirmPassword ? 'eye-off' : 'eye'}
-                      onPress={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
+            <View style={styles.bottomContent}>
+              <View style={styles.formContainer}>
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      mode="outlined"
+                      label="New Password"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      error={!!errors.password}
+                      secureTextEntry={!showPassword}
+                      autoComplete="new-password"
+                      left={<TextInput.Icon icon="lock" />}
+                      right={
+                        <TextInput.Icon
+                          icon={showPassword ? 'eye-off' : 'eye'}
+                          onPress={() => setShowPassword(!showPassword)}
+                        />
                       }
+                      style={styles.input}
+                      theme={{
+                        colors: {
+                          onSurface: '#000000',
+                          onSurfaceVariant: '#000000',
+                          outline: '#000000',
+                          primary: '#000000',
+                          background: 'transparent',
+                          onSurfaceDisabled: '#000000',
+                          secondary: '#000000',
+                          onSecondary: '#000000',
+                          surfaceVariant: 'transparent',
+                        },
+                        roundness: 8,
+                      }}
+                      textColor="#000000"
+                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
-                  }
-                  style={styles.input}
+                  )}
                 />
-              )}
-            />
-            {errors.confirmPassword && (
-              <Paragraph
-                style={[styles.errorText, { color: theme.colors.error }]}
-              >
-                {errors.confirmPassword.message}
-              </Paragraph>
-            )}
+                {errors.password && (
+                  <ThemedText style={styles.errorText}>
+                    {errors.password.message}
+                  </ThemedText>
+                )}
 
-            <Button
-              mode="contained"
-              onPress={handleSubmit(onResetPassword)}
-              loading={loading}
-              disabled={loading}
-              style={styles.resetButton}
-            >
-              Reset Password
-            </Button>
+                <Controller
+                  control={control}
+                  name="confirmPassword"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      mode="outlined"
+                      label="Confirm New Password"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      error={!!errors.confirmPassword}
+                      secureTextEntry={!showConfirmPassword}
+                      autoComplete="new-password"
+                      left={<TextInput.Icon icon="lock-check" />}
+                      right={
+                        <TextInput.Icon
+                          icon={showConfirmPassword ? 'eye-off' : 'eye'}
+                          onPress={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                        />
+                      }
+                      style={styles.input}
+                      theme={{
+                        colors: {
+                          onSurface: '#000000',
+                          onSurfaceVariant: '#000000',
+                          outline: '#000000',
+                          primary: '#000000',
+                          background: 'transparent',
+                          onSurfaceDisabled: '#000000',
+                          secondary: '#000000',
+                          onSecondary: '#000000',
+                          surfaceVariant: 'transparent',
+                        },
+                        roundness: 8,
+                      }}
+                      textColor="#000000"
+                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                    />
+                  )}
+                />
+                {errors.confirmPassword && (
+                  <ThemedText style={styles.errorText}>
+                    {errors.confirmPassword.message}
+                  </ThemedText>
+                )}
 
-            <Button
-              mode="text"
-              onPress={() => navigation.navigate('SignIn')}
-              style={styles.backButton}
-            >
-              Back to Sign In
-            </Button>
-          </View>
-        </Card.Content>
-      </Card>
-    </ScrollView>
+                <Button
+                  mode="contained"
+                  onPress={handleSubmit(onResetPassword)}
+                  loading={loading}
+                  disabled={loading}
+                  style={[
+                    styles.resetButton,
+                    { backgroundColor: theme.colors.tertiary },
+                  ]}
+                  labelStyle={styles.resetButtonLabel}
+                  contentStyle={styles.buttonContent}
+                >
+                  Reset Password
+                </Button>
+              </View>
+
+              <View style={styles.footer}>
+                <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+                  <ThemedText
+                    variant="body"
+                    size="medium"
+                    style={[styles.backButtonText, { color: '#FFFFFF' }]}
+                  >
+                    Back to Sign In
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { flex: 1 },
+  backgroundImage: { flex: 1, width, height },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  contentContainer: {
+  safeArea: { flex: 1 },
+  scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    alignItems: 'center',
   },
-  card: {
-    elevation: 4,
+  centerContent: {
+    marginBottom: 25,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+  headingText: {
+    fontSize: 36,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 15,
   },
-  subtitle: {
+  subHeadingText: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 32,
+    lineHeight: 24,
   },
-  form: {
-    gap: 16,
+  bottomContent: {
+    paddingHorizontal: 60,
+    width: '100%',
+  },
+  formContainer: {
+    marginBottom: 40,
   },
   input: {
     backgroundColor: 'transparent',
+    marginVertical: 8,
+    paddingTop: 8,
   },
   errorText: {
     fontSize: 12,
-    marginTop: -12,
+    color: '#FF6B6B',
+    marginTop: 4,
     marginLeft: 12,
   },
   resetButton: {
-    marginTop: 8,
-    paddingVertical: 8,
+    marginVertical: 16,
+    borderRadius: 8,
+    height: 48,
   },
-  backButton: {
-    marginTop: 8,
+  resetButtonLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  buttonContent: {
+    height: 48,
+    paddingVertical: 0,
+  },
+  footer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
 });

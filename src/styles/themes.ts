@@ -54,7 +54,7 @@ export const colors = {
     onSecondaryFixed: '#FFFFFF',
     onSecondaryFixedVariant: '#E8F5E8',
 
-    tertiary: '#FF9800', // Warning orange
+    tertiary: '#CC5500',
     tertiaryContainer: '#FFF3E0',
     tertiaryFixed: '#F57C00',
     tertiaryFixedDim: '#EF6C00',

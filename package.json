@@ -31,7 +31,7 @@
     "build:dev-and-start": "eas build --platform android --profile development --clear-cache && echo '🎉 Build complete! Install the APK and then run: npm run start:dev-client' && echo '📱 APK download link will be shown above'",
     "dev:ios:tunnel": "expo start --dev-client --host tunnel --port 8081",
     "dev:ios:lan": "expo start --dev-client --host lan --port 8081"
-  },
+  }, 
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.1",
     "@hookform/resolvers": "^3.10.0",
