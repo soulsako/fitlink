@@ -15,10 +15,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
+import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
-import { useAuth } from '../../providers/AuthProvider';
-import { type SignInFormData, signInSchema } from '../../schemas/authSchemas';
-import type { AuthStackScreenProps } from '../../types/navigation';
+import { useAuth } from '@/providers/AuthProvider';
+import { type SignInFormData, signInSchema } from '@/schemas/authSchemas';
+import type { AuthStackScreenProps } from '@/types/navigation';
+import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'SignIn'>;
 
@@ -72,12 +74,13 @@ export default function SignInScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../../assets/images/backgrounds/signin-background.png')}
+        source={require('../../../assets/images/backgrounds/signin.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
+          <BackButton fallbackRoute="Welcome" />
           <View style={styles.centerContent}>
             <ThemedText
               variant="headline"
@@ -113,7 +116,7 @@ export default function SignInScreen({ navigation }: Props) {
                     mode="outlined"
                     label="Email"
                     value={value}
-                    textContentType="password"
+                    textContentType="emailAddress"
                     secureTextEntry
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -121,30 +124,19 @@ export default function SignInScreen({ navigation }: Props) {
                     error={!!errors.email}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    autoComplete="password"
+                    autoComplete="email"
                     left={<TextInput.Icon icon="email" />}
                     style={styles.input}
-                    theme={{
-                      colors: {
-                        onSurface: '#000000',
-                        onSurfaceVariant: '#000000',
-                        outline: '#000000',
-                        primary: '#000000',
-                        background: 'transparent',
-                        onSurfaceDisabled: '#000000',
-                        secondary: '#000000',
-                        onSecondary: '#000000',
-                        surfaceVariant: 'transparent',
-                      },
-                      roundness: 8,
-                    }}
+                    theme={buildInputTheme(theme, { roundness: 8 })}
                     textColor="#000000"
                     placeholderTextColor="rgba(0, 0, 0, 0.7)"
                   />
                 )}
               />
               {errors.email && (
-                <ThemedText style={styles.errorText}>
+                <ThemedText
+                  style={[styles.errorText, { color: theme.colors.error }]}
+                >
                   {errors.email.message}
                 </ThemedText>
               )}
@@ -172,27 +164,16 @@ export default function SignInScreen({ navigation }: Props) {
                       />
                     }
                     style={styles.input}
-                    theme={{
-                      colors: {
-                        onSurface: '#000000',
-                        onSurfaceVariant: '#000000',
-                        outline: '#000000',
-                        primary: '#000000',
-                        background: 'transparent',
-                        onSurfaceDisabled: '#000000',
-                        secondary: '#000000',
-                        onSecondary: '#000000',
-                        surfaceVariant: 'transparent',
-                      },
-                      roundness: 8,
-                    }}
-                    textColor="#000000"
+                    theme={buildInputTheme(theme, { roundness: 8 })}
+                    textColor={theme.colors.onPrimary}
                     placeholderTextColor="rgba(0, 0, 0, 0.7)"
                   />
                 )}
               />
               {errors.password && (
-                <ThemedText style={styles.errorText}>
+                <ThemedText
+                  style={[styles.errorText, { color: theme.colors.error }]}
+                >
                   {errors.password.message}
                 </ThemedText>
               )}
@@ -280,6 +261,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
   safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  backButton: {
+    position: 'absolute',
+    top: 55,
+    left: 25,
+    zIndex: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 24,
+    padding: 6,
+  },
   centerContent: {
     marginBottom: 25,
   },
@@ -307,7 +297,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 12,
-    color: '#FF6B6B',
     marginTop: 4,
     marginLeft: 12,
   },

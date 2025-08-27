@@ -35,18 +35,13 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../../assets/images/backgrounds/login-background.png')}
+        source={require('../../../assets/images/backgrounds/wlecome.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContent}>
-            {/* <Image
-              source={require('../../../assets/brand/logo/transparent.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            /> */}
             <ThemedText
               variant="headline"
               size="large"
@@ -143,7 +138,6 @@ const styles = StyleSheet.create({
   centerContent: {
     marginBottom: 50,
   },
-  // logo: { width: 120, height: 120, marginBottom: 24 },
   headingText: {
     fontSize: 36,
     textAlign: 'center',

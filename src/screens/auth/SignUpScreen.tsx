@@ -16,10 +16,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
+import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
-import { useAuth } from '../../providers/AuthProvider';
-import { type SignUpFormData, signUpSchema } from '../../schemas/authSchemas';
-import type { AuthStackScreenProps } from '../../types/navigation';
+import { useAuth } from '@/providers/AuthProvider';
+import { type SignUpFormData, signUpSchema } from '@/schemas/authSchemas';
+import type { AuthStackScreenProps } from '@/types/navigation';
+import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'SignUp'>;
 
@@ -87,12 +89,13 @@ export default function SignUpScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../../assets/images/backgrounds/signup-background.png')}
+        source={require('../../../assets/images/backgrounds/signup.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
+          <BackButton fallbackRoute="Welcome" />
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
@@ -111,14 +114,7 @@ export default function SignUpScreen({ navigation }: Props) {
                 size="small"
                 style={styles.subHeadingText}
               >
-                Create your account to
-              </ThemedText>
-              <ThemedText
-                variant="body"
-                size="small"
-                style={styles.subHeadingText}
-              >
-                get started
+                Create your account to get started
               </ThemedText>
             </View>
 
@@ -139,27 +135,16 @@ export default function SignUpScreen({ navigation }: Props) {
                       autoComplete="name"
                       left={<TextInput.Icon icon="account" />}
                       style={styles.input}
-                      theme={{
-                        colors: {
-                          onSurface: '#000000',
-                          onSurfaceVariant: '#000000',
-                          outline: '#000000',
-                          primary: '#000000',
-                          background: 'transparent',
-                          onSurfaceDisabled: '#000000',
-                          secondary: '#000000',
-                          onSecondary: '#000000',
-                          surfaceVariant: 'transparent',
-                        },
-                        roundness: 8,
-                      }}
-                      textColor="#000000"
+                      theme={buildInputTheme(theme, { roundness: 8 })}
+                      textColor={theme.colors.onSurface}
                       placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
                   )}
                 />
                 {errors.fullName && (
-                  <ThemedText style={styles.errorText}>
+                  <ThemedText
+                    style={[styles.errorText, { color: theme.colors.error }]}
+                  >
                     {errors.fullName.message}
                   </ThemedText>
                 )}
@@ -182,14 +167,14 @@ export default function SignUpScreen({ navigation }: Props) {
                       style={styles.input}
                       theme={{
                         colors: {
-                          onSurface: '#000000',
-                          onSurfaceVariant: '#000000',
-                          outline: '#000000',
-                          primary: '#000000',
+                          onSurface: theme.colors.onPrimary,
+                          onSurfaceVariant: theme.colors.onPrimary,
+                          outline: theme.colors.onPrimary,
+                          primary: theme.colors.primary,
                           background: 'transparent',
-                          onSurfaceDisabled: '#000000',
-                          secondary: '#000000',
-                          onSecondary: '#000000',
+                          onSurfaceDisabled: theme.colors.onPrimary,
+                          secondary: theme.colors.onPrimary,
+                          onSecondary: theme.colors.onPrimary,
                           surfaceVariant: 'transparent',
                         },
                         roundness: 8,
@@ -200,7 +185,9 @@ export default function SignUpScreen({ navigation }: Props) {
                   )}
                 />
                 {errors.email && (
-                  <ThemedText style={styles.errorText}>
+                  <ThemedText
+                    style={[styles.errorText, { color: theme.colors.error }]}
+                  >
                     {errors.email.message}
                   </ThemedText>
                 )}
@@ -226,27 +213,16 @@ export default function SignUpScreen({ navigation }: Props) {
                         />
                       }
                       style={styles.input}
-                      theme={{
-                        colors: {
-                          onSurface: '#000000',
-                          onSurfaceVariant: '#000000',
-                          outline: '#000000',
-                          primary: '#000000',
-                          background: 'transparent',
-                          onSurfaceDisabled: '#000000',
-                          secondary: '#000000',
-                          onSecondary: '#000000',
-                          surfaceVariant: 'transparent',
-                        },
-                        roundness: 8,
-                      }}
+                      theme={buildInputTheme(theme, { roundness: 8 })}
                       textColor="#000000"
                       placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
                   )}
                 />
                 {errors.password && (
-                  <ThemedText style={styles.errorText}>
+                  <ThemedText
+                    style={[styles.errorText, { color: theme.colors.error }]}
+                  >
                     {errors.password.message}
                   </ThemedText>
                 )}
@@ -274,27 +250,16 @@ export default function SignUpScreen({ navigation }: Props) {
                         />
                       }
                       style={styles.input}
-                      theme={{
-                        colors: {
-                          onSurface: '#000000',
-                          onSurfaceVariant: '#000000',
-                          outline: '#000000',
-                          primary: '#000000',
-                          background: 'transparent',
-                          onSurfaceDisabled: '#000000',
-                          secondary: '#000000',
-                          onSecondary: '#000000',
-                          surfaceVariant: 'transparent',
-                        },
-                        roundness: 8,
-                      }}
+                      theme={buildInputTheme(theme, { roundness: 8 })}
                       textColor="#000000"
                       placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
                   )}
                 />
                 {errors.confirmPassword && (
-                  <ThemedText style={styles.errorText}>
+                  <ThemedText
+                    style={[styles.errorText, { color: theme.colors.error }]}
+                  >
                     {errors.confirmPassword.message}
                   </ThemedText>
                 )}
@@ -402,7 +367,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 12,
-    color: '#FF6B6B',
     marginTop: 4,
     marginLeft: 12,
   },

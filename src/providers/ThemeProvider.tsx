@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { Appearance } from 'react-native';
+import { Alert, Appearance } from 'react-native';
 import { darkTheme, lightTheme, type Theme } from '../styles/themes';
 
 export type Scheme = 'light' | 'dark';
@@ -20,6 +20,8 @@ const STORAGE_KEY = 'ui:scheme';
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const system = Appearance.getColorScheme();
   const initial: Scheme = system === 'dark' ? 'dark' : 'light';
+
+  Alert.alert('initial', initial);
 
   const [scheme, setSchemeState] = useState<Scheme>(initial);
 

@@ -72,10 +72,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const signOut = useCallback(async (): Promise<void> => {
-    await supabase.auth.signOut();
-    await AsyncStorage.clear(); // or remove only Supabase keys if you prefer
-    setSession(null); // ensure immediate UI switch
-    setUserProfile(null);
+    try {
+      // Ensure local session is cleared immediately so UI updates right away
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch {
+      // ignore
+    }
+
+    try {
+      // Best-effort: revoke refresh token on the server
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch {
+      // ignore; local sign-out already handled
+    }
+
+    try {
+      // Remove only Supabase auth keys to avoid nuking unrelated app data
+      const keys = await AsyncStorage.getAllKeys();
+      const sbKeys = keys.filter((k) => k.startsWith('sb-'));
+      if (sbKeys.length) {
+        await AsyncStorage.multiRemove(sbKeys);
+      }
+    } catch {
+      // Fallback: clear everything if targeted removal fails
+      try {
+        await AsyncStorage.clear();
+      } catch {
+        // ignore
+      }
+    } finally {
+      setSession(null);
+      setUserProfile(null);
+    }
   }, []);
 
   const fetchUserProfile = useCallback(async (userId: string) => {

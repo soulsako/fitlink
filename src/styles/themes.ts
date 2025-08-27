@@ -63,7 +63,7 @@ export const colors = {
     onTertiaryFixed: '#FFFFFF',
     onTertiaryFixedVariant: '#FFF3E0',
 
-    error: '#F44336', // Error red
+    error: '#B71C1C', // Error red
     errorContainer: '#FFEBEE',
     onError: '#FFFFFF',
     onErrorContainer: '#B71C1C',

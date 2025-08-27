@@ -1,6 +1,7 @@
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import { useAuth } from '@/providers/AuthProvider';
 import { MaterialIcons } from '@expo/vector-icons';
+import { CommonActions } from '@react-navigation/native';
 import type React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Card, Text, useTheme } from 'react-native-paper';
@@ -82,7 +83,7 @@ const ServicesScreen: React.FC<ServicesScreenProps> = ({ navigation }) => {
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: service.color + '20' },
+              { backgroundColor: `${service.color}20` },
             ]}
           >
             <MaterialIcons
@@ -117,8 +118,19 @@ const ServicesScreen: React.FC<ServicesScreenProps> = ({ navigation }) => {
     >
       <PrimaryButton
         title="Signout"
-        onPress={() => {
-          signOut();
+        onPress={async () => {
+          await signOut();
+
+          // jump from Main (tabs) -> Root -> Auth
+          navigation
+            .getParent()
+            ?.getParent()
+            ?.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'Auth' }], // AuthNavigator’s initialRouteName is "Welcome"
+              }),
+            );
         }}
       />
       <View style={styles.header}>

@@ -15,7 +15,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
+import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
+import {
+  colors as appColors,
+  fontSizes,
+  fonts,
+  lineHeights,
+} from '@/styles/themes';
+import { buildInputTheme } from '@/utils/paperInputTheme';
 import { useAuth } from '../../providers/AuthProvider';
 import {
   type ResetPasswordFormData,
@@ -72,38 +80,23 @@ export default function ResetPasswordScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../../assets/images/backgrounds/signin-background.png')}
+        source={require('../../../assets/images/backgrounds/resetpassword.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
+          <BackButton />
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.centerContent}>
-              <ThemedText
-                variant="headline"
-                size="large"
-                style={styles.headingText}
-                weight="bold"
-              >
+              <ThemedText style={styles.headingText}>
                 Set New Password
               </ThemedText>
-              <ThemedText
-                variant="body"
-                size="small"
-                style={styles.subHeadingText}
-              >
-                Enter your new password
-              </ThemedText>
-              <ThemedText
-                variant="body"
-                size="small"
-                style={styles.subHeadingText}
-              >
-                below
+              <ThemedText style={styles.subHeadingText}>
+                Enter your new password below
               </ThemedText>
             </View>
 
@@ -130,21 +123,8 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                         />
                       }
                       style={styles.input}
-                      theme={{
-                        colors: {
-                          onSurface: '#000000',
-                          onSurfaceVariant: '#000000',
-                          outline: '#000000',
-                          primary: '#000000',
-                          background: 'transparent',
-                          onSurfaceDisabled: '#000000',
-                          secondary: '#000000',
-                          onSecondary: '#000000',
-                          surfaceVariant: 'transparent',
-                        },
-                        roundness: 8,
-                      }}
-                      textColor="#000000"
+                      theme={buildInputTheme(theme, { roundness: 8 })}
+                      textColor={theme.colors.onSurface}
                       placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
                   )}
@@ -178,21 +158,8 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                         />
                       }
                       style={styles.input}
-                      theme={{
-                        colors: {
-                          onSurface: '#000000',
-                          onSurfaceVariant: '#000000',
-                          outline: '#000000',
-                          primary: '#000000',
-                          background: 'transparent',
-                          onSurfaceDisabled: '#000000',
-                          secondary: '#000000',
-                          onSecondary: '#000000',
-                          surfaceVariant: 'transparent',
-                        },
-                        roundness: 8,
-                      }}
-                      textColor="#000000"
+                      theme={buildInputTheme(theme, { roundness: 8 })}
+                      textColor={theme.colors.onSurface}
                       placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
                   )}
@@ -221,11 +188,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
 
               <View style={styles.footer}>
                 <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-                  <ThemedText
-                    variant="body"
-                    size="medium"
-                    style={[styles.backButtonText, { color: '#FFFFFF' }]}
-                  >
+                  <ThemedText style={styles.backButtonText}>
                     Back to Sign In
                   </ThemedText>
                 </TouchableOpacity>
@@ -255,14 +218,19 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   headingText: {
-    fontSize: 36,
+    fontSize: fontSizes['5xl'],
+    lineHeight: lineHeights['5xl'],
+    fontFamily: fonts.bold,
     textAlign: 'center',
     marginBottom: 15,
+    color: appColors.light.onSurface,
   },
   subHeadingText: {
-    fontSize: 16,
+    fontSize: fontSizes.base,
+    lineHeight: lineHeights.base,
+    fontFamily: fonts.regular,
     textAlign: 'center',
-    lineHeight: 24,
+    color: appColors.light.onSurface,
   },
   bottomContent: {
     paddingHorizontal: 60,
@@ -277,20 +245,22 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   errorText: {
-    fontSize: 12,
-    color: '#FF6B6B',
+    fontSize: fontSizes.xs,
+    color: appColors.light.error,
     marginTop: 4,
     marginLeft: 12,
+    fontFamily: fonts.regular,
   },
   resetButton: {
-    marginVertical: 16,
+    marginVertical: 8,
     borderRadius: 8,
     height: 48,
   },
   resetButtonLabel: {
-    fontSize: 14,
+    fontSize: fontSizes.sm,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: appColors.light.onTertiary,
+    fontFamily: fonts.bold,
   },
   buttonContent: {
     height: 48,
@@ -301,7 +271,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backButtonText: {
-    fontSize: 14,
+    fontSize: fontSizes.sm,
     textDecorationLine: 'underline',
+    color: appColors.light.onPrimary,
+    fontFamily: fonts.medium,
   },
 });
