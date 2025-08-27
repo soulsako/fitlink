@@ -29,9 +29,9 @@
     "build:clean": "rm -rf node_modules package-lock.json .expo && npm install && expo install --check && eas build --platform android --profile development --clear-cache",
     "build:dev": "eas build --platform android --profile development --clear-cache",
     "build:dev-and-start": "eas build --platform android --profile development --clear-cache && echo '🎉 Build complete! Install the APK and then run: npm run start:dev-client' && echo '📱 APK download link will be shown above'",
-    "dev:ios:tunnel": "expo start --dev-client --host tunnel --port 8081",
-    "dev:ios:lan": "expo start --dev-client --host lan --port 8081"
-  }, 
+    "ios:dev:tunnel": "expo start --dev-client --host tunnel --port 8081",
+    "ios:dev:lan": "expo start --dev-client --host lan --port 8081"
+  },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.1",
     "@hookform/resolvers": "^3.10.0",

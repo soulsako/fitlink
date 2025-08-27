@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { Alert, Appearance } from 'react-native';
+import { Appearance } from 'react-native';
 import { darkTheme, lightTheme, type Theme } from '../styles/themes';
 
 export type Scheme = 'light' | 'dark';
@@ -18,24 +18,32 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 const STORAGE_KEY = 'ui:scheme';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const system = Appearance.getColorScheme();
-  const initial: Scheme = system === 'dark' ? 'dark' : 'light';
-
-  Alert.alert('initial', initial);
-
-  const [scheme, setSchemeState] = useState<Scheme>(initial);
+  const [scheme, setSchemeState] = useState<Scheme>('light');
 
   useEffect(() => {
-    (async () => {
+    const init = async () => {
       try {
         const saved = await AsyncStorage.getItem(STORAGE_KEY);
         if (saved === 'light' || saved === 'dark') {
           setSchemeState(saved);
+        } else {
+          const system = Appearance.getColorScheme();
+          setSchemeState(system === 'dark' ? 'dark' : 'light');
         }
       } catch (error) {
         console.warn('Failed to load theme preference:', error);
       }
-    })();
+    };
+
+    init();
+
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+      setSchemeState(colorScheme === 'dark' ? 'dark' : 'light');
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   const setScheme = useMemo(
