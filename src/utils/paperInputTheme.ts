@@ -1,7 +1,7 @@
 // src/utils/paperInputTheme.ts
-import type { MD3Theme } from 'react-native-paper'
+import type { MD3Theme } from 'react-native-paper';
 
-type ColorsOverride = Record<string, string>
+type ColorsOverride = Record<string, string>;
 
 export const buildInputTheme = (
   theme: MD3Theme,
@@ -20,4 +20,4 @@ export const buildInputTheme = (
     surfaceVariant: 'transparent',
     ...(opts?.colors ?? {}),
   },
-})
+});

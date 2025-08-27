@@ -1,4 +1,4 @@
-import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
+import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
 
 // Font configuration
 export const fonts = {
@@ -6,7 +6,7 @@ export const fonts = {
   medium: 'Inter_500Medium',
   semiBold: 'Inter_600SemiBold',
   bold: 'Inter_700Bold',
-}
+};
 
 export const fontSizes = {
   xs: 12,
@@ -18,7 +18,7 @@ export const fontSizes = {
   '3xl': 28,
   '4xl': 32,
   '5xl': 36,
-}
+};
 
 export const lineHeights = {
   xs: 16,
@@ -30,7 +30,7 @@ export const lineHeights = {
   '3xl': 40,
   '4xl': 44,
   '5xl': 48,
-}
+};
 
 // LocalMind brand colors
 export const colors = {
@@ -168,7 +168,7 @@ export const colors = {
     warning: '#FFB74D',
     info: '#64B5F6',
   },
-}
+};
 
 // Create the theme objects with fonts
 export const lightTheme = {
@@ -278,7 +278,7 @@ export const lightTheme = {
     level4: 0,
     level5: 0,
   },
-}
+};
 
 export const darkTheme = {
   ...MD3DarkTheme,
@@ -292,6 +292,6 @@ export const darkTheme = {
     level4: 0,
     level5: 0,
   },
-}
+};
 
-export type Theme = typeof lightTheme
+export type Theme = typeof lightTheme;

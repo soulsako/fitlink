@@ -3,8 +3,8 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
   Inter_700Bold,
-} from '@expo-google-fonts/inter'
-import { useFonts as useExpoFonts } from 'expo-font'
+} from '@expo-google-fonts/inter';
+import { useFonts as useExpoFonts } from 'expo-font';
 
 export const useFonts = () => {
   const [fontsLoaded] = useExpoFonts({
@@ -12,7 +12,7 @@ export const useFonts = () => {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
-  })
+  });
 
-  return fontsLoaded
-}
+  return fontsLoaded;
+};
