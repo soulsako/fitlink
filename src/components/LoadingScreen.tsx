@@ -1,7 +1,6 @@
 import type React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
-import { useTheme } from '../providers/ThemeProvider';
+import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 
 const LoadingScreen: React.FC = () => {
   const { theme } = useTheme();

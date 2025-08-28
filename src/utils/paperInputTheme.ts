@@ -1,23 +1,20 @@
-// src/utils/paperInputTheme.ts
-import type { MD3Theme } from 'react-native-paper';
+import type { ExtendedTheme } from '../types/theme-types';
 
 type ColorsOverride = Record<string, string>;
 
 export const buildInputTheme = (
-  theme: MD3Theme,
+  theme: ExtendedTheme,
   opts?: { roundness?: number; colors?: ColorsOverride },
 ) => ({
   roundness: opts?.roundness ?? 8,
   colors: {
-    onSurface: theme.colors.onPrimary,
-    onSurfaceVariant: theme.colors.onPrimary,
-    outline: theme.colors.onPrimary,
-    primary: theme.colors.primary,
-    background: 'transparent',
-    onSurfaceDisabled: theme.colors.onPrimary,
-    secondary: theme.colors.onPrimary,
-    onSecondary: theme.colors.onPrimary,
-    surfaceVariant: 'transparent',
+    text: theme.colors.inputText,
+    placeholder: theme.colors.inputPlaceholder,
+    outline: theme.colors.inputOutline,
+    primary: theme.colors.inputFocusOutline,
+    background: theme.colors.inputBackground,
+    error: theme.colors.inputError,
+    onSurfaceDisabled: theme.colors.onSurfaceVariant,
     ...(opts?.colors ?? {}),
   },
 });

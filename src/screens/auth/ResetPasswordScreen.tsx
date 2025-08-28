@@ -22,7 +22,7 @@ import {
   fontSizes,
   fonts,
   lineHeights,
-} from '@/styles/themes';
+} from '@/styles/themes-styles';
 import { buildInputTheme } from '@/utils/paperInputTheme';
 import { useAuth } from '../../providers/AuthProvider';
 import {

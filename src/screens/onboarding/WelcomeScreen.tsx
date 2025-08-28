@@ -1,4 +1,9 @@
-// src/screens/onboarding/WelcomeScreen.tsx  (REPLACE ENTIRE FILE)
+import SocialButton from '@/components/ui/SocialButton';
+import ThemedText from '@/components/ui/ThemedText';
+import { ThemeToggleButton } from '@/components/ui/ThemeToggleButton';
+import { useAuth } from '@/providers/AuthProvider';
+import { useTheme } from '@/providers/ThemeProvider';
+import type { AuthStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
 import {
@@ -9,10 +14,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import SocialButton from '../../components/ui/SocialButton';
-import ThemedText from '../../components/ui/ThemedText';
-import { useAuth } from '../../providers/AuthProvider';
-import type { AuthStackScreenProps } from '../../types/navigation';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,6 +21,7 @@ type AuthLoginScreenProps = AuthStackScreenProps<'Welcome'>;
 
 const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
   const { signInWithGoogle } = useAuth();
+  const { isDark, theme } = useTheme();
 
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();
@@ -34,18 +36,30 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <ImageBackground></ImageBackground>
       <ImageBackground
-        source={require('../../../assets/images/backgrounds/wlecome.png')}
+        source={
+          isDark
+            ? require('../../../assets/images/backgrounds/welcome-dark.png')
+            : require('../../../assets/images/backgrounds/welcome-light.png')
+        }
         style={styles.backgroundImage}
         resizeMode="cover"
       >
-        <View style={styles.overlay} />
+        <View
+          style={[
+            styles.overlay,
+            { backgroundColor: isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.3)' },
+          ]}
+        />
         <SafeAreaView style={styles.safeArea}>
+          <ThemeToggleButton />
+
           <View style={styles.centerContent}>
             <ThemedText
               variant="headline"
               size="large"
-              style={styles.headingText}
+              style={[styles.headingText, { color: theme.colors.primary }]}
               weight="bold"
             >
               Local Mind
@@ -53,14 +67,20 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
             <ThemedText
               variant="body"
               size="small"
-              style={styles.subHeadingText}
+              style={[
+                styles.subHeadingText,
+                { color: theme.colors.onBackground },
+              ]}
             >
               Smart, secure sign-in to
             </ThemedText>
             <ThemedText
               variant="body"
               size="small"
-              style={styles.subHeadingText}
+              style={[
+                styles.subHeadingText,
+                { color: theme.colors.onBackground },
+              ]}
             >
               your community hub
             </ThemedText>
@@ -95,18 +115,25 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
                 style={styles.footerButton}
                 onPress={handleLanguagePress}
               >
-                <MaterialIcons name="language" size={20} color="#FFFFFF" />
+                <MaterialIcons
+                  name="language"
+                  size={20}
+                  color={theme.colors.onBackground}
+                />
                 <ThemedText
                   variant="body"
                   size="medium"
-                  style={[styles.footerText, { color: '#FFFFFF' }]}
+                  style={[
+                    styles.footerText,
+                    { color: theme.colors.onBackground },
+                  ]}
                 >
                   EN (US)
                 </ThemedText>
                 <MaterialIcons
                   name="keyboard-arrow-down"
                   size={20}
-                  color="#FFFFFF"
+                  color={theme.colors.onBackground}
                 />
               </TouchableOpacity>
 
@@ -114,7 +141,7 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
                 <ThemedText
                   variant="body"
                   size="medium"
-                  style={[styles.inviteText, { color: '#FFFFFF' }]}
+                  style={[styles.inviteText, { color: theme.colors.primary }]}
                 >
                   Have an invite code?
                 </ThemedText>
@@ -132,7 +159,6 @@ const styles = StyleSheet.create({
   backgroundImage: { flex: 1, width, height },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
   },
   safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   centerContent: {

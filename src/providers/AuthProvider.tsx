@@ -182,7 +182,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             redirectTo: `${window.location.origin}/auth/callback`,
           },
         });
-        if (error) return error;
+        if (error) {
+          return error;
+        }
         return null;
       } else {
         const { data, error } = await supabase.auth.signInWithOAuth({
@@ -196,7 +198,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         });
 
-        if (error) return error;
+        if (error) {
+          return error;
+        }
 
         if (data?.url) {
           const result = await WebBrowser.openAuthSessionAsync(

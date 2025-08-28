@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { Appearance } from 'react-native';
-import { darkTheme, lightTheme, type Theme } from '../styles/themes';
+import { darkTheme, lightTheme, type Theme } from '../styles/themes-styles';
 
 export type Scheme = 'light' | 'dark';
 
@@ -18,8 +17,9 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 const STORAGE_KEY = 'ui:scheme';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [scheme, setSchemeState] = useState<Scheme>('light');
+  const [scheme, setSchemeState] = useState<Scheme | null>(null);
 
+  // Load saved theme preference
   useEffect(() => {
     const init = async () => {
       try {
@@ -27,23 +27,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (saved === 'light' || saved === 'dark') {
           setSchemeState(saved);
         } else {
-          const system = Appearance.getColorScheme();
-          setSchemeState(system === 'dark' ? 'dark' : 'light');
+          // fallback default if nothing stored
+          setSchemeState('light');
         }
       } catch (error) {
         console.warn('Failed to load theme preference:', error);
+        setSchemeState('light');
       }
     };
 
     init();
-
-    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-      setSchemeState(colorScheme === 'dark' ? 'dark' : 'light');
-    });
-
-    return () => {
-      subscription.remove();
-    };
   }, []);
 
   const setScheme = useMemo(
@@ -66,16 +59,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [scheme],
   );
 
-  const value: ThemeContextValue = useMemo(
-    () => ({
-      scheme,
-      isDark: scheme === 'dark',
-      theme,
-      setScheme,
-      toggleScheme,
-    }),
-    [scheme, theme, setScheme, toggleScheme],
-  );
+  if (!scheme) {
+    // render nothing (or a splash/loading) until theme is resolved
+    return null;
+  }
+
+  const value: ThemeContextValue = {
+    scheme,
+    isDark: scheme === 'dark',
+    theme,
+    setScheme,
+    toggleScheme,
+  };
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

@@ -41,29 +41,41 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   > = {
     google: {
       text: 'Continue with Google',
-      backgroundColor: '#FFFFFF',
-      textColor: '#000000',
-      borderColor: '#000000',
+      backgroundColor: theme.colors.socialGoogleBg,
+      textColor: theme.colors.socialGoogleText,
+      borderColor: theme.colors.socialGoogleBorder,
       renderIcon: () => (
-        <AntDesign name="google" size={20} color={iconColor ?? '#000000'} />
+        <AntDesign
+          name="google"
+          size={20}
+          color={iconColor ?? theme.colors.socialGoogleIcon}
+        />
       ),
     },
     apple: {
       text: 'Continue with Apple',
-      backgroundColor: '#000000',
-      textColor: '#FFFFFF',
-      borderColor: '#000000',
+      backgroundColor: theme.colors.socialAppleBg,
+      textColor: theme.colors.socialAppleText,
+      borderColor: theme.colors.socialAppleBorder,
       renderIcon: () => (
-        <FontAwesome name="apple" size={22} color={iconColor ?? '#FFFFFF'} />
+        <FontAwesome
+          name="apple"
+          size={22}
+          color={iconColor ?? theme.colors.socialAppleIcon}
+        />
       ),
     },
     facebook: {
       text: 'Continue with Facebook',
-      backgroundColor: '#1877F2',
-      textColor: '#FFFFFF',
-      borderColor: '#1877F2',
+      backgroundColor: theme.colors.socialFacebookBg,
+      textColor: theme.colors.socialFacebookText,
+      borderColor: theme.colors.socialFacebookBorder,
       renderIcon: () => (
-        <FontAwesome name="facebook" size={20} color={iconColor ?? '#FFFFFF'} />
+        <FontAwesome
+          name="facebook"
+          size={20}
+          color={iconColor ?? theme.colors.socialFacebookIcon}
+        />
       ),
     },
     email: {
@@ -98,11 +110,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       onPress={onPress}
       disabled={disabled}
     >
+      {/* invisible icon for layout consistency */}
       <MaterialIcons name="arrow-back" size={0} color="transparent" />
-      {/* layout fix for no-icon flicker in some RN versions */}
-      {/* icon */}
       {c.renderIcon()}
-      {/* spacer */}
       <MaterialIcons name="arrow-back" size={0} color="transparent" />
       <Text style={[styles.text, { color: c.textColor }, textStyle]}>
         {c.text}
