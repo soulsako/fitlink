@@ -1,3 +1,4 @@
+import { ThemedBackground } from '@/components/ThemeBackground';
 import SocialButton from '@/components/ui/SocialButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { ThemeToggleButton } from '@/components/ui/ThemeToggleButton';
@@ -6,22 +7,14 @@ import { useTheme } from '@/providers/ThemeProvider';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
-import {
-  Dimensions,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const { width, height } = Dimensions.get('window');
 
 type AuthLoginScreenProps = AuthStackScreenProps<'Welcome'>;
 
 const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
   const { signInWithGoogle } = useAuth();
-  const { isDark, theme } = useTheme();
+  const { theme } = useTheme();
 
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();
@@ -36,22 +29,10 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground></ImageBackground>
-      <ImageBackground
-        source={
-          isDark
-            ? require('../../../assets/images/backgrounds/welcome-dark.png')
-            : require('../../../assets/images/backgrounds/welcome-light.png')
-        }
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <ThemedBackground
+        lightImage={require('../../../assets/images/backgrounds/welcome-light.png')}
+        darkImage={require('../../../assets/images/backgrounds/welcome-dark.png')}
       >
-        <View
-          style={[
-            styles.overlay,
-            { backgroundColor: isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.3)' },
-          ]}
-        />
         <SafeAreaView style={styles.safeArea}>
           <ThemeToggleButton />
 
@@ -149,17 +130,13 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
             </View>
           </View>
         </SafeAreaView>
-      </ImageBackground>
+      </ThemedBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  backgroundImage: { flex: 1, width, height },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-  },
   safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   centerContent: {
     marginBottom: 50,

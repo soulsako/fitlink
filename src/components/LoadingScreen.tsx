@@ -1,9 +1,10 @@
+import type { ExtendedTheme } from '@/styles/themes-styles'; // 👈 import your extended theme type
 import type React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 
 const LoadingScreen: React.FC = () => {
-  const { theme } = useTheme();
+  const theme = useTheme<ExtendedTheme>(); // ✅ no destructure
 
   return (
     <View

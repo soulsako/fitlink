@@ -2,30 +2,23 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  Alert,
-  Dimensions,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Button, TextInput, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const { width, height } = Dimensions.get('window');
-
+import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
 import { type SignInFormData, signInSchema } from '@/schemas/authSchemas';
+import type { ExtendedTheme } from '@/styles/themes-styles';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'SignIn'>;
 
 export default function SignInScreen({ navigation }: Props) {
-  const theme = useTheme();
+  const theme = useTheme<ExtendedTheme>();
   const { signIn, signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -73,19 +66,17 @@ export default function SignInScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/images/backgrounds/signin.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <ThemedBackground
+        lightImage={require('../../../assets/images/backgrounds/signin-light.png')}
+        darkImage={require('../../../assets/images/backgrounds/signin-dark.png')}
       >
-        <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
           <BackButton fallbackRoute="Welcome" />
           <View style={styles.centerContent}>
             <ThemedText
               variant="headline"
               size="large"
-              style={styles.headingText}
+              style={[styles.headingText, { color: theme.colors.primary }]}
               weight="bold"
             >
               Welcome Back
@@ -93,14 +84,20 @@ export default function SignInScreen({ navigation }: Props) {
             <ThemedText
               variant="body"
               size="small"
-              style={styles.subHeadingText}
+              style={[
+                styles.subHeadingText,
+                { color: theme.colors.onBackground },
+              ]}
             >
               Sign in to your
             </ThemedText>
             <ThemedText
               variant="body"
               size="small"
-              style={styles.subHeadingText}
+              style={[
+                styles.subHeadingText,
+                { color: theme.colors.onBackground },
+              ]}
             >
               Local Mind account
             </ThemedText>
@@ -108,6 +105,7 @@ export default function SignInScreen({ navigation }: Props) {
 
           <View style={styles.bottomContent}>
             <View style={styles.formContainer}>
+              {/* Email */}
               <Controller
                 control={control}
                 name="email"
@@ -117,7 +115,6 @@ export default function SignInScreen({ navigation }: Props) {
                     label="Email"
                     value={value}
                     textContentType="emailAddress"
-                    secureTextEntry
                     onChangeText={onChange}
                     onBlur={onBlur}
                     contentStyle={{ paddingTop: 12 }}
@@ -128,19 +125,20 @@ export default function SignInScreen({ navigation }: Props) {
                     left={<TextInput.Icon icon="email" />}
                     style={styles.input}
                     theme={buildInputTheme(theme, { roundness: 8 })}
-                    textColor="#000000"
-                    placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                    textColor={theme.colors.inputText}
+                    placeholderTextColor={theme.colors.inputPlaceholder}
                   />
                 )}
               />
               {errors.email && (
                 <ThemedText
-                  style={[styles.errorText, { color: theme.colors.error }]}
+                  style={[styles.errorText, { color: theme.colors.inputError }]}
                 >
                   {errors.email.message}
                 </ThemedText>
               )}
 
+              {/* Password */}
               <Controller
                 control={control}
                 name="password"
@@ -165,19 +163,20 @@ export default function SignInScreen({ navigation }: Props) {
                     }
                     style={styles.input}
                     theme={buildInputTheme(theme, { roundness: 8 })}
-                    textColor={theme.colors.onPrimary}
-                    placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                    textColor={theme.colors.inputText}
+                    placeholderTextColor={theme.colors.inputPlaceholder}
                   />
                 )}
               />
               {errors.password && (
                 <ThemedText
-                  style={[styles.errorText, { color: theme.colors.error }]}
+                  style={[styles.errorText, { color: theme.colors.inputError }]}
                 >
                   {errors.password.message}
                 </ThemedText>
               )}
 
+              {/* Forgot password */}
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgotPassword')}
                 style={styles.forgotPasswordButton}
@@ -185,12 +184,16 @@ export default function SignInScreen({ navigation }: Props) {
                 <ThemedText
                   variant="body"
                   size="medium"
-                  style={styles.forgotPasswordText}
+                  style={[
+                    styles.forgotPasswordText,
+                    { color: theme.colors.primary },
+                  ]}
                 >
                   Forgot Password?
                 </ThemedText>
               </TouchableOpacity>
 
+              {/* Sign in button */}
               <Button
                 mode="contained"
                 onPress={handleSubmit(onSignIn)}
@@ -200,47 +203,83 @@ export default function SignInScreen({ navigation }: Props) {
                   styles.signInButton,
                   { backgroundColor: theme.colors.tertiary },
                 ]}
-                labelStyle={styles.signInButtonLabel}
+                labelStyle={[
+                  styles.signInButtonLabel,
+                  { color: theme.colors.onTertiary },
+                ]}
                 contentStyle={styles.buttonContent}
               >
                 Sign In
               </Button>
 
+              {/* Divider */}
               <View style={styles.dividerContainer}>
-                <View style={styles.dividerLine} />
-                <ThemedText style={styles.dividerText}>or</ThemedText>
-                <View style={styles.dividerLine} />
+                <View
+                  style={[
+                    styles.dividerLine,
+                    { backgroundColor: theme.colors.outline },
+                  ]}
+                />
+                <ThemedText
+                  style={[
+                    styles.dividerText,
+                    { color: theme.colors.onSurfaceVariant },
+                  ]}
+                >
+                  or
+                </ThemedText>
+                <View
+                  style={[
+                    styles.dividerLine,
+                    { backgroundColor: theme.colors.outline },
+                  ]}
+                />
               </View>
 
+              {/* Google Button */}
               <Button
                 mode="contained"
                 onPress={onGoogleSignIn}
                 loading={googleLoading}
                 disabled={loading || googleLoading}
                 icon={() => (
-                  <MaterialIcons name="login" size={20} color="#000000" />
+                  <MaterialIcons
+                    name="login"
+                    size={20}
+                    color={theme.colors.socialGoogleIcon}
+                  />
                 )}
-                style={styles.googleButton}
-                labelStyle={styles.googleButtonLabel}
+                style={[
+                  styles.googleButton,
+                  { backgroundColor: theme.colors.socialGoogleBg },
+                ]}
+                labelStyle={[
+                  styles.googleButtonLabel,
+                  { color: theme.colors.socialGoogleText },
+                ]}
                 contentStyle={styles.buttonContent}
               >
                 Continue with Google
               </Button>
             </View>
 
+            {/* Footer */}
             <View style={styles.footer}>
               <ThemedText
                 variant="body"
                 size="medium"
-                style={[styles.footerText, { color: '#FFFFFF' }]}
+                style={[
+                  styles.footerText,
+                  { color: theme.colors.onBackground },
+                ]}
               >
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
               </ThemedText>
               <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <ThemedText
                   variant="body"
                   size="medium"
-                  style={[styles.signUpText, { color: '#FFFFFF' }]}
+                  style={[styles.signUpText, { color: theme.colors.primary }]}
                 >
                   Sign Up
                 </ThemedText>
@@ -248,28 +287,14 @@ export default function SignInScreen({ navigation }: Props) {
             </View>
           </View>
         </SafeAreaView>
-      </ImageBackground>
+      </ThemedBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  backgroundImage: { flex: 1, width, height },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
   safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  backButton: {
-    position: 'absolute',
-    top: 55,
-    left: 25,
-    zIndex: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderRadius: 24,
-    padding: 6,
-  },
   centerContent: {
     marginBottom: 25,
   },
@@ -306,7 +331,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   forgotPasswordText: {
-    color: '#000000',
     fontSize: 14,
     textDecorationLine: 'underline',
   },
@@ -318,7 +342,6 @@ const styles = StyleSheet.create({
   signInButtonLabel: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FFFFFF',
   },
   buttonContent: {
     height: 48,
@@ -332,23 +355,18 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#000000',
   },
   dividerText: {
     marginHorizontal: 16,
-    color: '#000000',
     fontSize: 14,
   },
-
   googleButton: {
     marginVertical: 8,
-    backgroundColor: '#000000',
     borderRadius: 8,
     height: 48,
   },
   googleButtonLabel: {
     fontSize: 14,
-    color: '#FFFFFF',
   },
   footer: {
     flexDirection: 'row',

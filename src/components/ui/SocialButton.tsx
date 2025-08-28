@@ -1,3 +1,4 @@
+import { useTheme } from '@/providers/ThemeProvider'; // <-- your context hook
 import { AntDesign, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
 import {
@@ -6,7 +7,7 @@ import {
   TouchableOpacity,
   type ViewStyle,
 } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 type Provider = 'google' | 'apple' | 'facebook' | 'email';
 
@@ -27,7 +28,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   textStyle,
   iconColor,
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme(); // ✅ gives ExtendedTheme with custom colors
 
   const config: Record<
     Provider,
@@ -110,10 +111,11 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       onPress={onPress}
       disabled={disabled}
     >
-      {/* invisible icon for layout consistency */}
+      {/* Invisible icons keep spacing consistent across RN versions */}
       <MaterialIcons name="arrow-back" size={0} color="transparent" />
       {c.renderIcon()}
       <MaterialIcons name="arrow-back" size={0} color="transparent" />
+
       <Text style={[styles.text, { color: c.textColor }, textStyle]}>
         {c.text}
       </Text>
