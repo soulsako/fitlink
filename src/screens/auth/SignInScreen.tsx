@@ -201,7 +201,7 @@ export default function SignInScreen({ navigation }: Props) {
                 disabled={loading || googleLoading}
                 style={[
                   styles.signInButton,
-                  { backgroundColor: theme.colors.tertiary },
+                  { backgroundColor: theme.colors.primary },
                 ]}
                 labelStyle={[
                   styles.signInButtonLabel,
