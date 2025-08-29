@@ -1,20 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  Alert,
-  Dimensions,
-  ImageBackground,
-  Text as RNText,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const { width, height } = Dimensions.get('window');
-
+import ScreenBackground from '@/components/ScreenBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
@@ -24,7 +15,6 @@ import {
 } from '@/schemas/authSchemas';
 import { theme } from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
-import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'ForgotPassword'>;
 
@@ -68,166 +58,176 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
     }
   };
 
+  // Custom input theme for React Native Paper
+  const inputTheme = {
+    colors: {
+      primary: theme.colors.inputBorderFocus,
+      outline: theme.colors.inputBorder,
+      outlineVariant: theme.colors.inputBorder,
+      onSurfaceVariant: theme.colors.inputPlaceholder,
+      onSurface: theme.colors.inputText,
+      surface: theme.colors.inputBackground,
+      surfaceVariant: theme.colors.inputBackground,
+      error: theme.colors.inputBorderError,
+      onBackground: theme.colors.inputText,
+      background: theme.colors.inputBackground,
+    },
+  };
+
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/images/backgrounds/forgotpassword-light.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <ScreenBackground
+        source={require('../../../assets/images/backgrounds/welcome-light.png')}
       >
-        <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
           <BackButton fallbackRoute="Welcome" />
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.centerContent}>
-              <ThemedText
-                variant="headline"
-                size="large"
-                style={[styles.headingText, { color: theme.colors.primary }]}
-                weight="bold"
-              >
-                {emailSent ? 'Check Your Email' : 'Reset Password'}
-              </ThemedText>
 
-              <ThemedText
-                variant="body"
-                size="small"
-                style={[
-                  styles.subHeadingText,
-                  { color: theme.colors.textSecondary },
-                ]}
-              >
-                {emailSent
-                  ? `We've sent a password reset link to your email. Follow the instructions to reset your password.`
-                  : `Enter your email and we'll send you a link to reset your password.`}
-              </ThemedText>
-            </View>
+          <View style={styles.centerContent}>
+            <ThemedText
+              variant="headline"
+              size="large"
+              style={[styles.headingText, { color: theme.colors.primary }]}
+              weight="bold"
+            >
+              {emailSent ? 'Check Your Email' : 'Reset Password'}
+            </ThemedText>
+            <ThemedText
+              variant="body"
+              size="small"
+              style={[
+                styles.subHeadingText,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
+              {emailSent
+                ? "We've sent a password reset link to your email. Follow the instructions to reset your password."
+                : "Enter your email and we'll send you a link to reset your password."}
+            </ThemedText>
+          </View>
 
-            <View style={styles.bottomContent}>
-              <View style={styles.formContainer}>
-                {!emailSent && (
-                  <>
-                    <Controller
-                      control={control}
-                      name="email"
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <View style={styles.inputContainer}>
-                          <TextInput
-                            mode="outlined"
-                            label="Email"
-                            value={value}
-                            onChangeText={onChange}
-                            onBlur={onBlur}
-                            error={!!errors.email}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoComplete="email"
-                            left={
-                              <TextInput.Icon
-                                icon="email"
-                                color={theme.colors.iconSecondary}
-                              />
-                            }
-                            style={styles.input}
-                            theme={buildInputTheme(theme)}
-                            textColor={theme.colors.inputText}
-                            placeholderTextColor={theme.colors.inputPlaceholder}
-                            outlineStyle={[
-                              styles.inputOutline,
-                              errors.email && {
-                                borderColor: theme.colors.inputBorderError,
-                              },
+          <View style={styles.bottomContent}>
+            <View style={styles.formContainer}>
+              {!emailSent && (
+                <>
+                  {/* Email Input */}
+                  <Controller
+                    control={control}
+                    name="email"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <View style={styles.inputContainer}>
+                        <TextInput
+                          mode="outlined"
+                          label="Email"
+                          value={value}
+                          onChangeText={onChange}
+                          onBlur={onBlur}
+                          error={!!errors.email}
+                          keyboardType="email-address"
+                          autoCapitalize="none"
+                          autoComplete="email"
+                          left={
+                            <TextInput.Icon
+                              icon="email"
+                              color={theme.colors.iconSecondary}
+                            />
+                          }
+                          style={styles.input}
+                          theme={inputTheme}
+                          textColor={theme.colors.inputText}
+                          placeholderTextColor={theme.colors.inputPlaceholder}
+                          outlineStyle={[
+                            styles.inputOutline,
+                            errors.email && {
+                              borderColor: theme.colors.inputBorderError,
+                            },
+                          ]}
+                        />
+                        {errors.email && (
+                          <ThemedText
+                            style={[
+                              styles.errorText,
+                              { color: theme.colors.error },
                             ]}
-                          />
-                          {errors.email && (
-                            <ThemedText
-                              style={[
-                                styles.errorText,
-                                { color: theme.colors.error },
-                              ]}
-                            >
-                              {errors.email.message}
-                            </ThemedText>
-                          )}
-                        </View>
-                      )}
-                    />
+                          >
+                            {errors.email.message}
+                          </ThemedText>
+                        )}
+                      </View>
+                    )}
+                  />
 
-                    <Button
-                      mode="contained"
-                      onPress={handleSubmit(onSendResetEmail)}
-                      loading={loading}
-                      disabled={loading}
-                      style={[
-                        styles.resetButton,
-                        { backgroundColor: theme.colors.buttonPrimary },
-                      ]}
-                      labelStyle={[
-                        styles.resetButtonLabel,
-                        { color: theme.colors.buttonPrimaryText },
-                      ]}
-                      contentStyle={styles.buttonContent}
-                    >
-                      Send Reset Link
-                    </Button>
-                  </>
-                )}
-
-                {emailSent && (
+                  {/* Send Reset Link Button */}
                   <Button
-                    mode="outlined"
-                    onPress={onResendEmail}
+                    mode="contained"
+                    onPress={handleSubmit(onSendResetEmail)}
                     loading={loading}
+                    disabled={loading}
                     style={[
-                      styles.resendButton,
-                      {
-                        borderColor: theme.colors.buttonOutlineBorder,
-                        backgroundColor: theme.colors.buttonOutline,
-                      },
+                      styles.resetButton,
+                      { backgroundColor: theme.colors.buttonPrimary },
                     ]}
                     labelStyle={[
-                      styles.resendButtonLabel,
-                      { color: theme.colors.buttonOutlineText },
+                      styles.resetButtonLabel,
+                      { color: theme.colors.buttonPrimaryText },
                     ]}
+                    contentStyle={styles.buttonContent}
                   >
-                    Resend Email
+                    Send Reset Link
                   </Button>
-                )}
+                </>
+              )}
 
+              {emailSent && (
                 <Button
-                  mode="text"
-                  onPress={() => navigation.navigate('SignIn')}
-                  style={styles.backButton}
+                  mode="outlined"
+                  onPress={onResendEmail}
+                  loading={loading}
+                  style={[
+                    styles.resendButton,
+                    {
+                      borderColor: theme.colors.buttonOutlineBorder,
+                      backgroundColor: theme.colors.primary,
+                    },
+                  ]}
                   labelStyle={[
-                    styles.backButtonLabel,
+                    styles.resendButtonLabel,
+                    { color: theme.colors.white },
+                  ]}
+                >
+                  Resend Email
+                </Button>
+              )}
+
+              {/* Back to Sign In */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate('SignIn')}
+                style={styles.backButton}
+              >
+                <ThemedText
+                  variant="body"
+                  size="medium"
+                  style={[
+                    styles.backText,
                     { color: theme.colors.textSecondary },
                   ]}
                 >
-                  <RNText
-                    style={[
-                      styles.backInlineText,
-                      { color: theme.colors.textSecondary },
-                    ]}
-                  >
-                    Back to{' '}
-                  </RNText>
-                  <RNText
+                  Back to{' '}
+                  <ThemedText
+                    variant="body"
+                    size="medium"
                     style={[
                       styles.backLinkText,
                       { color: theme.colors.primary },
                     ]}
                   >
                     Sign In
-                  </RNText>
-                </Button>
-              </View>
+                  </ThemedText>
+                </ThemedText>
+              </TouchableOpacity>
             </View>
-          </ScrollView>
+          </View>
         </SafeAreaView>
-      </ImageBackground>
+      </ScreenBackground>
     </View>
   );
 }
@@ -237,27 +237,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
-  backgroundImage: {
-    flex: 1,
-    width,
-    height,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-  },
   safeArea: {
     flex: 1,
-    paddingHorizontal: theme.spacing.md,
-  },
-  scrollContent: {
-    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: theme.spacing.md,
   },
   centerContent: {
     marginBottom: theme.spacing.lg,
-    paddingHorizontal: theme.spacing['2xl'],
     alignItems: 'center',
   },
   headingText: {
@@ -270,6 +257,8 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSizes.base,
     textAlign: 'center',
     lineHeight: theme.lineHeights.base,
+    marginBottom: theme.spacing.xs,
+    paddingHorizontal: theme.spacing.lg,
   },
   bottomContent: {
     width: '100%',
@@ -280,7 +269,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing['2xl'],
   },
   inputContainer: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
   },
   input: {
     backgroundColor: theme.colors.inputBackground,
@@ -304,6 +293,9 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSizes.sm,
     fontWeight: '600',
   },
+  buttonContent: {
+    height: 48,
+  },
   resendButton: {
     marginBottom: theme.spacing.lg,
     borderRadius: theme.borderRadius.md,
@@ -314,18 +306,11 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSizes.sm,
     fontWeight: '500',
   },
-  buttonContent: {
-    height: 48,
-  },
   backButton: {
     marginTop: theme.spacing.md,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: 'center',
   },
-  backButtonLabel: {
-    fontSize: theme.fontSizes.sm,
-  },
-  backInlineText: {
+  backText: {
     fontSize: theme.fontSizes.sm,
   },
   backLinkText: {

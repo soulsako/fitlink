@@ -1,23 +1,17 @@
-import { MaterialIcons } from '@expo/vector-icons';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import {
-  Alert,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import ScreenBackground from '@/components/ScreenBackground';
 import BackButton from '@/components/ui/BackButton';
+import SocialButton from '@/components/ui/SocialButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
 import { type SignInFormData, signInSchema } from '@/schemas/authSchemas';
 import { theme } from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = AuthStackScreenProps<'SignIn'>;
 
@@ -83,10 +77,9 @@ export default function SignInScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/images/backgrounds/signin-light.png')}
+      <ScreenBackground
+        source={require('../../../assets/images/backgrounds/welcome-light.png')}
         style={styles.backgroundImage}
-        resizeMode="cover"
       >
         <SafeAreaView style={styles.safeArea}>
           <BackButton fallbackRoute="Welcome" />
@@ -286,34 +279,12 @@ export default function SignInScreen({ navigation }: Props) {
               </View>
 
               {/* Google Sign In Button */}
-              <Button
-                mode="contained"
+              <SocialButton
+                provider="google"
                 onPress={onGoogleSignIn}
-                loading={googleLoading}
-                disabled={loading || googleLoading}
-                icon={() => (
-                  <MaterialIcons
-                    name="login"
-                    size={20}
-                    color={theme.colors.socialGoogleText}
-                  />
-                )}
-                style={[
-                  styles.googleButton,
-                  {
-                    backgroundColor: theme.colors.socialGoogle,
-                    borderColor: theme.colors.socialGoogleBorder,
-                    borderWidth: 1,
-                  },
-                ]}
-                labelStyle={[
-                  styles.googleButtonLabel,
-                  { color: theme.colors.socialGoogleText },
-                ]}
-                contentStyle={styles.buttonContent}
-              >
-                Continue with Google
-              </Button>
+                style={styles.socialButton}
+                backgroundColor={theme.colors.black}
+              />
             </View>
 
             {/* Footer */}
@@ -340,7 +311,7 @@ export default function SignInScreen({ navigation }: Props) {
             </View>
           </View>
         </SafeAreaView>
-      </ImageBackground>
+      </ScreenBackground>
     </View>
   );
 }
@@ -368,6 +339,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: theme.spacing.md,
     letterSpacing: -0.5,
+  },
+  socialButton: {
+    marginVertical: theme.spacing.xs,
   },
   subHeadingText: {
     fontSize: theme.fontSizes.base,

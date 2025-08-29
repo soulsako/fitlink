@@ -1,3 +1,4 @@
+import ScreenBackground from '@/components/ScreenBackground';
 import SocialButton from '@/components/ui/SocialButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
@@ -5,12 +6,7 @@ import theme from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
-import {
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type AuthLoginScreenProps = AuthStackScreenProps<'Welcome'>;
@@ -31,10 +27,8 @@ const WelcomeScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
+      <ScreenBackground
         source={require('../../../assets/images/backgrounds/welcome-light.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
       >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContent}>
@@ -54,7 +48,7 @@ const WelcomeScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
                 { color: theme.colors.textSecondary },
               ]}
             >
-              Smart, secure sign-in to
+              Smart, secure sign-in to your
             </ThemedText>
             <ThemedText
               variant="body"
@@ -64,7 +58,7 @@ const WelcomeScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
                 { color: theme.colors.textSecondary },
               ]}
             >
-              your community hub
+              community hub
             </ThemedText>
           </View>
 
@@ -96,7 +90,7 @@ const WelcomeScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
               <TouchableOpacity
                 style={[
                   styles.footerButton,
-                  { backgroundColor: theme.colors.surfaceSecondary },
+                  { backgroundColor: theme.colors.white },
                 ]}
                 onPress={handleLanguagePress}
               >
@@ -134,7 +128,7 @@ const WelcomeScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
             </View>
           </View>
         </SafeAreaView>
-      </ImageBackground>
+      </ScreenBackground>
     </View>
   );
 };
@@ -168,7 +162,7 @@ const styles = StyleSheet.create({
   subHeadingText: {
     fontSize: theme.fontSizes.base,
     textAlign: 'center',
-    lineHeight: theme.lineHeights.base,
+    lineHeight: theme.lineHeights.sm,
     marginBottom: theme.spacing.xs,
   },
   bottomContent: {
@@ -196,7 +190,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: theme.colors.dividerLight,
+    borderColor: theme.colors.white,
   },
   footerText: {
     marginHorizontal: theme.spacing.xs,

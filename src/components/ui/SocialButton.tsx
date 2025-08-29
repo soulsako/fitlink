@@ -18,6 +18,7 @@ interface SocialButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   iconColor?: string;
+  backgroundColor?: string;
 }
 
 const SocialButton: React.FC<SocialButtonProps> = ({
@@ -26,6 +27,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   disabled = false,
   style,
   textStyle,
+  backgroundColor,
   iconColor,
 }) => {
   const config: Record<
@@ -40,14 +42,14 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   > = {
     google: {
       text: 'Continue with Google',
-      backgroundColor: theme.colors.socialGoogle,
-      textColor: theme.colors.socialGoogleText,
+      backgroundColor: backgroundColor ?? theme.colors.primary,
+      textColor: theme.colors.white,
       borderColor: theme.colors.socialGoogleBorder,
       renderIcon: () => (
         <AntDesign
           name="google"
           size={20}
-          color={iconColor ?? theme.colors.socialGoogleText}
+          color={iconColor ?? theme.colors.white}
         />
       ),
     },
@@ -79,14 +81,14 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     },
     email: {
       text: 'Continue with Email',
-      backgroundColor: theme.colors.buttonPrimary,
-      textColor: theme.colors.buttonPrimaryText,
-      borderColor: theme.colors.buttonPrimary,
+      backgroundColor: theme.colors.socialGoogle,
+      textColor: theme.colors.black,
+      borderColor: theme.colors.gray300,
       renderIcon: () => (
         <MaterialIcons
           name="email"
           size={20}
-          color={iconColor ?? theme.colors.buttonPrimaryText}
+          color={iconColor ?? theme.colors.black}
         />
       ),
     },

@@ -69,7 +69,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../../assets/images/backgrounds/resetpassword-light.png')}
+        source={require('../../../assets/images/backgrounds/welcome-light.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
