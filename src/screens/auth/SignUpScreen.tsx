@@ -1,7 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -138,6 +144,10 @@ export default function SignUpScreen({ navigation }: Props) {
                       error={!!errors.fullName}
                       autoCapitalize="words"
                       autoComplete="name"
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
                       left={
                         <TextInput.Icon
                           icon="account"
@@ -185,6 +195,10 @@ export default function SignUpScreen({ navigation }: Props) {
                       keyboardType="email-address"
                       autoCapitalize="none"
                       autoComplete="email"
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
                       left={
                         <TextInput.Icon
                           icon="email"
@@ -231,6 +245,10 @@ export default function SignUpScreen({ navigation }: Props) {
                       error={!!errors.password}
                       secureTextEntry={!showPassword}
                       autoComplete="new-password"
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
                       left={
                         <TextInput.Icon
                           icon="lock"
@@ -280,6 +298,10 @@ export default function SignUpScreen({ navigation }: Props) {
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
                       error={!!errors.confirmPassword}
                       secureTextEntry={!showConfirmPassword}
                       autoComplete="new-password"

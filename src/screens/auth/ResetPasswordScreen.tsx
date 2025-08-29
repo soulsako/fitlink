@@ -5,6 +5,7 @@ import {
   Alert,
   Dimensions,
   ImageBackground,
+  Keyboard,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -117,6 +118,10 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                         onBlur={onBlur}
                         error={!!errors.password}
                         secureTextEntry={!showPassword}
+                        returnKeyType="done"
+                        submitBehavior="blurAndSubmit"
+                        multiline={false}
+                        onSubmitEditing={() => Keyboard.dismiss()}
                         autoComplete="new-password"
                         left={
                           <TextInput.Icon
@@ -171,6 +176,10 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                         error={!!errors.confirmPassword}
                         secureTextEntry={!showConfirmPassword}
                         autoComplete="new-password"
+                        returnKeyType="done"
+                        submitBehavior="blurAndSubmit"
+                        multiline={false}
+                        onSubmitEditing={() => Keyboard.dismiss()}
                         left={
                           <TextInput.Icon
                             icon="lock-check"

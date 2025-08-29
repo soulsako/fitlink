@@ -1,7 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -125,6 +131,10 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                           keyboardType="email-address"
                           autoCapitalize="none"
                           autoComplete="email"
+                          returnKeyType="done"
+                          submitBehavior="blurAndSubmit"
+                          multiline={false}
+                          onSubmitEditing={() => Keyboard.dismiss()}
                           left={
                             <TextInput.Icon
                               icon="email"

@@ -9,7 +9,13 @@ import type { AuthStackScreenProps } from '@/types/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -150,6 +156,10 @@ export default function SignInScreen({ navigation }: Props) {
                           borderColor: theme.colors.inputBorderError,
                         },
                       ]}
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
                     />
                     {errors.email && (
                       <ThemedText
@@ -180,6 +190,10 @@ export default function SignInScreen({ navigation }: Props) {
                       error={!!errors.password}
                       secureTextEntry={!showPassword}
                       autoComplete="password"
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
                       left={
                         <TextInput.Icon
                           icon="lock"
