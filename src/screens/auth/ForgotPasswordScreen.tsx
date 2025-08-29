@@ -4,7 +4,6 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
-  ImageBackground,
   Text as RNText,
   ScrollView,
   StyleSheet,
@@ -15,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
+import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
@@ -22,13 +22,14 @@ import {
   type ForgotPasswordFormData,
   forgotPasswordSchema,
 } from '@/schemas/authSchemas';
+import type { ExtendedTheme } from '@/styles/themes-styles';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'ForgotPassword'>;
 
 export default function ForgotPasswordScreen({ navigation }: Props) {
-  const theme = useTheme();
+  const theme = useTheme<ExtendedTheme>();
   const { sendPasswordResetEmail } = useAuth();
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -70,10 +71,9 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/images/backgrounds/forgotpassword.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <ThemedBackground
+        lightImage="../../../assets/images/backgrounds/forgotpassword-light.png"
+        darkImage="../../../assets/images/backgrounds/forgotpassword-dark.png"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
@@ -86,7 +86,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
               <ThemedText
                 variant="headline"
                 size="large"
-                style={styles.headingText}
+                style={[styles.headingText, { color: theme.colors.onSurface }]}
                 weight="bold"
               >
                 {emailSent ? 'Check Your Email' : 'Reset Password'}
@@ -95,7 +95,10 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
               <ThemedText
                 variant="body"
                 size="small"
-                style={styles.subHeadingText}
+                style={[
+                  styles.subHeadingText,
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 {emailSent
                   ? 'We’ve sent a password reset link to your email. Follow the instructions to reset your password.'
@@ -124,13 +127,18 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                           left={<TextInput.Icon icon="email" />}
                           style={styles.input}
                           theme={buildInputTheme(theme, { roundness: 8 })}
-                          textColor="#000000"
-                          placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                          textColor={theme.colors.inputText}
+                          placeholderTextColor={theme.colors.inputPlaceholder}
                         />
                       )}
                     />
                     {errors.email && (
-                      <ThemedText style={styles.errorText}>
+                      <ThemedText
+                        style={[
+                          styles.errorText,
+                          { color: theme.colors.inputError },
+                        ]}
+                      >
                         {errors.email.message}
                       </ThemedText>
                     )}
@@ -142,9 +150,12 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                       disabled={loading}
                       style={[
                         styles.resetButton,
-                        { backgroundColor: theme.colors.tertiary },
+                        { backgroundColor: theme.colors.primary },
                       ]}
-                      labelStyle={styles.resetButtonLabel}
+                      labelStyle={[
+                        styles.resetButtonLabel,
+                        { color: theme.colors.onPrimary },
+                      ]}
                       contentStyle={styles.buttonContent}
                     >
                       Send Reset Link
@@ -159,9 +170,12 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                     loading={loading}
                     style={[
                       styles.resendButton,
-                      { backgroundColor: theme.colors.tertiary },
+                      { borderColor: theme.colors.outline },
                     ]}
-                    labelStyle={styles.resendButtonLabel}
+                    labelStyle={[
+                      styles.resendButtonLabel,
+                      { color: theme.colors.primary },
+                    ]}
                   >
                     Resend Email
                   </Button>
@@ -171,16 +185,33 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                   mode="text"
                   onPress={() => navigation.navigate('SignIn')}
                   style={styles.backButton}
-                  labelStyle={styles.backButtonLabel}
+                  labelStyle={[
+                    styles.backButtonLabel,
+                    { color: theme.colors.onSurface },
+                  ]}
                 >
-                  <RNText style={styles.backInlineText}>Back to </RNText>
-                  <RNText style={styles.backLinkText}>Sign In</RNText>
+                  <RNText
+                    style={[
+                      styles.backInlineText,
+                      { color: theme.colors.onSurface },
+                    ]}
+                  >
+                    Back to{' '}
+                  </RNText>
+                  <RNText
+                    style={[
+                      styles.backLinkText,
+                      { color: theme.colors.primary },
+                    ]}
+                  >
+                    Sign In
+                  </RNText>
                 </Button>
               </View>
             </View>
           </ScrollView>
         </SafeAreaView>
-      </ImageBackground>
+      </ThemedBackground>
     </View>
   );
 }
@@ -206,13 +237,11 @@ const styles = StyleSheet.create({
     fontSize: 36,
     textAlign: 'center',
     marginBottom: 15,
-    color: '#000000',
   },
   subHeadingText: {
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 24,
-    color: '#000000',
   },
   bottomContent: {
     paddingHorizontal: 60,
@@ -228,7 +257,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 12,
-    color: '#FF6B6B',
     marginTop: 4,
     marginLeft: 12,
   },
@@ -240,7 +268,6 @@ const styles = StyleSheet.create({
   resetButtonLabel: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FFFFFF',
   },
   resendButton: {
     marginTop: 16,
@@ -250,7 +277,6 @@ const styles = StyleSheet.create({
   },
   resendButtonLabel: {
     fontSize: 14,
-    color: '#000000',
   },
   buttonContent: {
     height: 48,
@@ -266,11 +292,9 @@ const styles = StyleSheet.create({
   },
   backInlineText: {
     fontSize: 14,
-    color: '#000000',
   },
   backLinkText: {
     fontSize: 14,
     textDecorationLine: 'underline',
-    color: '#000000',
   },
 });

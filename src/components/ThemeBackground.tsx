@@ -27,7 +27,7 @@ export function ThemedBackground({
   const { isDark } = useTheme();
 
   const source = isDark ? darkImage : lightImage;
-  const overlayColor = isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.3)';
+  const overlayColor = 'rgba(0, 0, 0, 0.15)';
 
   return (
     <ImageBackground

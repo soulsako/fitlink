@@ -5,7 +5,6 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
-  ImageBackground,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -16,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
+import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
@@ -88,10 +88,9 @@ export default function SignUpScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/images/backgrounds/signup.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <ThemedBackground
+        lightImage={require('../../../assets/images/backgrounds/signup-light.png')}
+        darkImage={require('../../../assets/images/backgrounds/signup-dark.png')}
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
@@ -322,7 +321,7 @@ export default function SignUpScreen({ navigation }: Props) {
             </View>
           </ScrollView>
         </SafeAreaView>
-      </ImageBackground>
+      </ThemedBackground>
     </View>
   );
 }

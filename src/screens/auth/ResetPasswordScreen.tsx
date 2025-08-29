@@ -4,7 +4,6 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
-  ImageBackground,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -15,14 +14,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
+import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
-import {
-  colors as appColors,
-  fontSizes,
-  fonts,
-  lineHeights,
-} from '@/styles/themes-styles';
+import type { ExtendedTheme } from '@/styles/themes-styles';
+import { fontSizes, fonts, lineHeights } from '@/styles/themes-styles';
 import { buildInputTheme } from '@/utils/paperInputTheme';
 import { useAuth } from '../../providers/AuthProvider';
 import {
@@ -34,7 +30,7 @@ import type { AuthStackScreenProps } from '../../types/navigation';
 type Props = AuthStackScreenProps<'ResetPassword'>;
 
 export default function ResetPasswordScreen({ navigation }: Props) {
-  const theme = useTheme();
+  const theme = useTheme<ExtendedTheme>();
   const { resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -62,12 +58,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
         Alert.alert(
           'Password Reset Successfully',
           'Your password has been reset. You can now sign in with your new password.',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.navigate('SignIn'),
-            },
-          ],
+          [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }],
         );
       }
     } catch {
@@ -79,10 +70,9 @@ export default function ResetPasswordScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/images/backgrounds/resetpassword.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <ThemedBackground
+        lightImage="../../../assets/images/backgrounds/resetpassword-light.png"
+        darkImage="../../../assets/images/backgrounds/resetpassword-dark.png"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
@@ -92,16 +82,24 @@ export default function ResetPasswordScreen({ navigation }: Props) {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.centerContent}>
-              <ThemedText style={styles.headingText}>
+              <ThemedText
+                style={[styles.headingText, { color: theme.colors.onSurface }]}
+              >
                 Set New Password
               </ThemedText>
-              <ThemedText style={styles.subHeadingText}>
+              <ThemedText
+                style={[
+                  styles.subHeadingText,
+                  { color: theme.colors.onSurface },
+                ]}
+              >
                 Enter your new password below
               </ThemedText>
             </View>
 
             <View style={styles.bottomContent}>
               <View style={styles.formContainer}>
+                {/* Password */}
                 <Controller
                   control={control}
                   name="password"
@@ -124,17 +122,23 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                       }
                       style={styles.input}
                       theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor={theme.colors.onSurface}
-                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
                     />
                   )}
                 />
                 {errors.password && (
-                  <ThemedText style={styles.errorText}>
+                  <ThemedText
+                    style={[
+                      styles.errorText,
+                      { color: theme.colors.inputError },
+                    ]}
+                  >
                     {errors.password.message}
                   </ThemedText>
                 )}
 
+                {/* Confirm Password */}
                 <Controller
                   control={control}
                   name="confirmPassword"
@@ -159,17 +163,23 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                       }
                       style={styles.input}
                       theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor={theme.colors.onSurface}
-                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
                     />
                   )}
                 />
                 {errors.confirmPassword && (
-                  <ThemedText style={styles.errorText}>
+                  <ThemedText
+                    style={[
+                      styles.errorText,
+                      { color: theme.colors.inputError },
+                    ]}
+                  >
                     {errors.confirmPassword.message}
                   </ThemedText>
                 )}
 
+                {/* Reset Button */}
                 <Button
                   mode="contained"
                   onPress={handleSubmit(onResetPassword)}
@@ -177,18 +187,27 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                   disabled={loading}
                   style={[
                     styles.resetButton,
-                    { backgroundColor: theme.colors.tertiary },
+                    { backgroundColor: theme.colors.primary },
                   ]}
-                  labelStyle={styles.resetButtonLabel}
+                  labelStyle={[
+                    styles.resetButtonLabel,
+                    { color: theme.colors.onPrimary },
+                  ]}
                   contentStyle={styles.buttonContent}
                 >
                   Reset Password
                 </Button>
               </View>
 
+              {/* Footer */}
               <View style={styles.footer}>
                 <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-                  <ThemedText style={styles.backButtonText}>
+                  <ThemedText
+                    style={[
+                      styles.backButtonText,
+                      { color: theme.colors.primary },
+                    ]}
+                  >
                     Back to Sign In
                   </ThemedText>
                 </TouchableOpacity>
@@ -196,7 +215,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
             </View>
           </ScrollView>
         </SafeAreaView>
-      </ImageBackground>
+      </ThemedBackground>
     </View>
   );
 }
@@ -223,14 +242,12 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold,
     textAlign: 'center',
     marginBottom: 15,
-    color: appColors.light.onSurface,
   },
   subHeadingText: {
     fontSize: fontSizes.base,
     lineHeight: lineHeights.base,
     fontFamily: fonts.regular,
     textAlign: 'center',
-    color: appColors.light.onSurface,
   },
   bottomContent: {
     paddingHorizontal: 60,
@@ -246,7 +263,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: fontSizes.xs,
-    color: appColors.light.error,
     marginTop: 4,
     marginLeft: 12,
     fontFamily: fonts.regular,
@@ -259,7 +275,6 @@ const styles = StyleSheet.create({
   resetButtonLabel: {
     fontSize: fontSizes.sm,
     fontWeight: 'bold',
-    color: appColors.light.onTertiary,
     fontFamily: fonts.bold,
   },
   buttonContent: {
@@ -273,7 +288,6 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: fontSizes.sm,
     textDecorationLine: 'underline',
-    color: appColors.light.onPrimary,
     fontFamily: fonts.medium,
   },
 });
