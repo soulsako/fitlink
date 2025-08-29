@@ -1,22 +1,24 @@
-import type { ExtendedTheme } from '@/styles/themes-styles'; // 👈 import your extended theme type
+import { theme } from '@/styles/theme';
 import type React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
 
 const LoadingScreen: React.FC = () => {
-  const theme = useTheme<ExtendedTheme>(); // ✅ no destructure
-
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <ActivityIndicator size="large" color={theme.colors.primary} />
+      <ActivityIndicator
+        size="large"
+        color={theme.colors.primary}
+        style={styles.spinner}
+      />
       <Text
         style={[
           styles.loadingText,
           {
-            color: theme.colors.onBackground,
-            fontFamily: 'System', // Use system font while Inter loads
+            color: theme.colors.textSecondary,
+            fontFamily: theme.fonts.medium,
           },
         ]}
       >
@@ -31,11 +33,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: theme.spacing.lg,
+  },
+  spinner: {
+    marginBottom: theme.spacing.lg,
   },
   loadingText: {
-    marginTop: 16,
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: theme.fontSizes.base,
+    lineHeight: theme.lineHeights.base,
   },
 });
 

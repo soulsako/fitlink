@@ -4,21 +4,20 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
+  ImageBackground,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, TextInput, useTheme } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
-import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
-import type { ExtendedTheme } from '@/styles/themes-styles';
-import { fontSizes, fonts, lineHeights } from '@/styles/themes-styles';
+import { theme } from '@/styles/theme';
 import { buildInputTheme } from '@/utils/paperInputTheme';
 import { useAuth } from '../../providers/AuthProvider';
 import {
@@ -30,7 +29,6 @@ import type { AuthStackScreenProps } from '../../types/navigation';
 type Props = AuthStackScreenProps<'ResetPassword'>;
 
 export default function ResetPasswordScreen({ navigation }: Props) {
-  const theme = useTheme<ExtendedTheme>();
   const { resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -70,9 +68,10 @@ export default function ResetPasswordScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ThemedBackground
-        lightImage="../../../assets/images/backgrounds/resetpassword-light.png"
-        darkImage="../../../assets/images/backgrounds/resetpassword-dark.png"
+      <ImageBackground
+        source={require('../../../assets/images/backgrounds/resetpassword-light.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
@@ -83,14 +82,19 @@ export default function ResetPasswordScreen({ navigation }: Props) {
           >
             <View style={styles.centerContent}>
               <ThemedText
-                style={[styles.headingText, { color: theme.colors.onSurface }]}
+                variant="headline"
+                size="large"
+                style={[styles.headingText, { color: theme.colors.primary }]}
+                weight="bold"
               >
                 Set New Password
               </ThemedText>
               <ThemedText
+                variant="body"
+                size="small"
                 style={[
                   styles.subHeadingText,
-                  { color: theme.colors.onSurface },
+                  { color: theme.colors.textSecondary },
                 ]}
               >
                 Enter your new password below
@@ -104,80 +108,108 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                   control={control}
                   name="password"
                   render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      mode="outlined"
-                      label="New Password"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      error={!!errors.password}
-                      secureTextEntry={!showPassword}
-                      autoComplete="new-password"
-                      left={<TextInput.Icon icon="lock" />}
-                      right={
-                        <TextInput.Icon
-                          icon={showPassword ? 'eye-off' : 'eye'}
-                          onPress={() => setShowPassword(!showPassword)}
-                        />
-                      }
-                      style={styles.input}
-                      theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor={theme.colors.inputText}
-                      placeholderTextColor={theme.colors.inputPlaceholder}
-                    />
+                    <View style={styles.inputContainer}>
+                      <TextInput
+                        mode="outlined"
+                        label="New Password"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        error={!!errors.password}
+                        secureTextEntry={!showPassword}
+                        autoComplete="new-password"
+                        left={
+                          <TextInput.Icon
+                            icon="lock"
+                            color={theme.colors.iconSecondary}
+                          />
+                        }
+                        right={
+                          <TextInput.Icon
+                            icon={showPassword ? 'eye-off' : 'eye'}
+                            color={theme.colors.iconSecondary}
+                            onPress={() => setShowPassword(!showPassword)}
+                          />
+                        }
+                        style={styles.input}
+                        theme={buildInputTheme(theme)}
+                        textColor={theme.colors.inputText}
+                        placeholderTextColor={theme.colors.inputPlaceholder}
+                        outlineStyle={[
+                          styles.inputOutline,
+                          errors.password && {
+                            borderColor: theme.colors.inputBorderError,
+                          },
+                        ]}
+                      />
+                      {errors.password && (
+                        <ThemedText
+                          style={[
+                            styles.errorText,
+                            { color: theme.colors.error },
+                          ]}
+                        >
+                          {errors.password.message}
+                        </ThemedText>
+                      )}
+                    </View>
                   )}
                 />
-                {errors.password && (
-                  <ThemedText
-                    style={[
-                      styles.errorText,
-                      { color: theme.colors.inputError },
-                    ]}
-                  >
-                    {errors.password.message}
-                  </ThemedText>
-                )}
 
                 {/* Confirm Password */}
                 <Controller
                   control={control}
                   name="confirmPassword"
                   render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      mode="outlined"
-                      label="Confirm New Password"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      error={!!errors.confirmPassword}
-                      secureTextEntry={!showConfirmPassword}
-                      autoComplete="new-password"
-                      left={<TextInput.Icon icon="lock-check" />}
-                      right={
-                        <TextInput.Icon
-                          icon={showConfirmPassword ? 'eye-off' : 'eye'}
-                          onPress={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                        />
-                      }
-                      style={styles.input}
-                      theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor={theme.colors.inputText}
-                      placeholderTextColor={theme.colors.inputPlaceholder}
-                    />
+                    <View style={styles.inputContainer}>
+                      <TextInput
+                        mode="outlined"
+                        label="Confirm New Password"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        error={!!errors.confirmPassword}
+                        secureTextEntry={!showConfirmPassword}
+                        autoComplete="new-password"
+                        left={
+                          <TextInput.Icon
+                            icon="lock-check"
+                            color={theme.colors.iconSecondary}
+                          />
+                        }
+                        right={
+                          <TextInput.Icon
+                            icon={showConfirmPassword ? 'eye-off' : 'eye'}
+                            color={theme.colors.iconSecondary}
+                            onPress={() =>
+                              setShowConfirmPassword(!showConfirmPassword)
+                            }
+                          />
+                        }
+                        style={styles.input}
+                        theme={buildInputTheme(theme)}
+                        textColor={theme.colors.inputText}
+                        placeholderTextColor={theme.colors.inputPlaceholder}
+                        outlineStyle={[
+                          styles.inputOutline,
+                          errors.confirmPassword && {
+                            borderColor: theme.colors.inputBorderError,
+                          },
+                        ]}
+                      />
+                      {errors.confirmPassword && (
+                        <ThemedText
+                          style={[
+                            styles.errorText,
+                            { color: theme.colors.error },
+                          ]}
+                        >
+                          {errors.confirmPassword.message}
+                        </ThemedText>
+                      )}
+                    </View>
                   )}
                 />
-                {errors.confirmPassword && (
-                  <ThemedText
-                    style={[
-                      styles.errorText,
-                      { color: theme.colors.inputError },
-                    ]}
-                  >
-                    {errors.confirmPassword.message}
-                  </ThemedText>
-                )}
 
                 {/* Reset Button */}
                 <Button
@@ -187,11 +219,11 @@ export default function ResetPasswordScreen({ navigation }: Props) {
                   disabled={loading}
                   style={[
                     styles.resetButton,
-                    { backgroundColor: theme.colors.primary },
+                    { backgroundColor: theme.colors.buttonPrimary },
                   ]}
                   labelStyle={[
                     styles.resetButtonLabel,
-                    { color: theme.colors.onPrimary },
+                    { color: theme.colors.buttonPrimaryText },
                   ]}
                   contentStyle={styles.buttonContent}
                 >
@@ -203,6 +235,8 @@ export default function ResetPasswordScreen({ navigation }: Props) {
               <View style={styles.footer}>
                 <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
                   <ThemedText
+                    variant="body"
+                    size="medium"
                     style={[
                       styles.backButtonText,
                       { color: theme.colors.primary },
@@ -215,79 +249,94 @@ export default function ResetPasswordScreen({ navigation }: Props) {
             </View>
           </ScrollView>
         </SafeAreaView>
-      </ThemedBackground>
+      </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  backgroundImage: { flex: 1, width, height },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  backgroundImage: {
+    flex: 1,
+    width,
+    height,
+  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
-  safeArea: { flex: 1 },
+  safeArea: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.md,
+  },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   centerContent: {
-    marginBottom: 25,
+    marginBottom: theme.spacing.lg,
+    alignItems: 'center',
   },
   headingText: {
-    fontSize: fontSizes['5xl'],
-    lineHeight: lineHeights['5xl'],
-    fontFamily: fonts.bold,
+    fontSize: theme.fontSizes['4xl'],
+    lineHeight: theme.lineHeights['4xl'],
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
+    letterSpacing: -0.5,
   },
   subHeadingText: {
-    fontSize: fontSizes.base,
-    lineHeight: lineHeights.base,
-    fontFamily: fonts.regular,
+    fontSize: theme.fontSizes.base,
+    lineHeight: theme.lineHeights.base,
     textAlign: 'center',
   },
   bottomContent: {
-    paddingHorizontal: 60,
     width: '100%',
+    maxWidth: 400,
+    paddingHorizontal: theme.spacing.xl,
   },
   formContainer: {
-    marginBottom: 40,
+    marginBottom: theme.spacing['2xl'],
+  },
+  inputContainer: {
+    marginBottom: theme.spacing.md,
   },
   input: {
-    backgroundColor: 'transparent',
-    marginVertical: 8,
-    paddingTop: 8,
+    backgroundColor: theme.colors.inputBackground,
+  },
+  inputOutline: {
+    borderColor: theme.colors.inputBorder,
+    borderWidth: 1,
+    borderRadius: theme.borderRadius.md,
   },
   errorText: {
-    fontSize: fontSizes.xs,
-    marginTop: 4,
-    marginLeft: 12,
-    fontFamily: fonts.regular,
+    fontSize: theme.fontSizes.xs,
+    marginTop: theme.spacing.xs,
+    marginLeft: theme.spacing.sm,
   },
   resetButton: {
-    marginVertical: 8,
-    borderRadius: 8,
+    marginTop: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     height: 48,
   },
   resetButtonLabel: {
-    fontSize: fontSizes.sm,
-    fontWeight: 'bold',
-    fontFamily: fonts.bold,
+    fontSize: theme.fontSizes.sm,
+    fontWeight: '600',
   },
   buttonContent: {
     height: 48,
-    paddingVertical: 0,
   },
   footer: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: theme.spacing.md,
   },
   backButtonText: {
-    fontSize: fontSizes.sm,
+    fontSize: theme.fontSizes.sm,
     textDecorationLine: 'underline',
-    fontFamily: fonts.medium,
+    fontWeight: '500',
   },
 });

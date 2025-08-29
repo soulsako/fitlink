@@ -2,23 +2,26 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Button, TextInput, useTheme } from 'react-native-paper';
+import {
+  Alert,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
 import { type SignInFormData, signInSchema } from '@/schemas/authSchemas';
-import type { ExtendedTheme } from '@/styles/themes-styles';
+import { theme } from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
-import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'SignIn'>;
 
 export default function SignInScreen({ navigation }: Props) {
-  const theme = useTheme<ExtendedTheme>();
   const { signIn, signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -64,14 +67,30 @@ export default function SignInScreen({ navigation }: Props) {
     }
   };
 
+  // Custom input theme for React Native Paper
+  const inputTheme = {
+    colors: {
+      primary: theme.colors.inputBorderFocus,
+      outline: theme.colors.inputBorder,
+      outlineVariant: theme.colors.inputBorder,
+      onSurfaceVariant: theme.colors.inputPlaceholder,
+      onSurface: theme.colors.inputText,
+      surface: theme.colors.inputBackground,
+      surfaceVariant: theme.colors.inputBackground,
+      error: theme.colors.inputBorderError,
+    },
+  };
+
   return (
     <View style={styles.container}>
-      <ThemedBackground
-        lightImage={require('../../../assets/images/backgrounds/signin-light.png')}
-        darkImage={require('../../../assets/images/backgrounds/signin-dark.png')}
+      <ImageBackground
+        source={require('../../../assets/images/backgrounds/signin-light.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
         <SafeAreaView style={styles.safeArea}>
           <BackButton fallbackRoute="Welcome" />
+
           <View style={styles.centerContent}>
             <ThemedText
               variant="headline"
@@ -86,7 +105,7 @@ export default function SignInScreen({ navigation }: Props) {
               size="small"
               style={[
                 styles.subHeadingText,
-                { color: theme.colors.onBackground },
+                { color: theme.colors.textSecondary },
               ]}
             >
               Sign in to your
@@ -96,7 +115,7 @@ export default function SignInScreen({ navigation }: Props) {
               size="small"
               style={[
                 styles.subHeadingText,
-                { color: theme.colors.onBackground },
+                { color: theme.colors.textSecondary },
               ]}
             >
               Local Mind account
@@ -105,78 +124,108 @@ export default function SignInScreen({ navigation }: Props) {
 
           <View style={styles.bottomContent}>
             <View style={styles.formContainer}>
-              {/* Email */}
+              {/* Email Input */}
               <Controller
                 control={control}
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    mode="outlined"
-                    label="Email"
-                    value={value}
-                    textContentType="emailAddress"
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    contentStyle={{ paddingTop: 12 }}
-                    error={!!errors.email}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    left={<TextInput.Icon icon="email" />}
-                    style={styles.input}
-                    theme={buildInputTheme(theme, { roundness: 8 })}
-                    textColor={theme.colors.inputText}
-                    placeholderTextColor={theme.colors.inputPlaceholder}
-                  />
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      mode="outlined"
+                      label="Email"
+                      value={value}
+                      textContentType="emailAddress"
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      error={!!errors.email}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      left={
+                        <TextInput.Icon
+                          icon="email"
+                          color={theme.colors.iconSecondary}
+                        />
+                      }
+                      style={styles.input}
+                      theme={inputTheme}
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
+                      outlineStyle={[
+                        styles.inputOutline,
+                        errors.email && {
+                          borderColor: theme.colors.inputBorderError,
+                        },
+                      ]}
+                    />
+                    {errors.email && (
+                      <ThemedText
+                        style={[
+                          styles.errorText,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        {errors.email.message}
+                      </ThemedText>
+                    )}
+                  </View>
                 )}
               />
-              {errors.email && (
-                <ThemedText
-                  style={[styles.errorText, { color: theme.colors.inputError }]}
-                >
-                  {errors.email.message}
-                </ThemedText>
-              )}
 
-              {/* Password */}
+              {/* Password Input */}
               <Controller
                 control={control}
                 name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    mode="outlined"
-                    label="Password"
-                    contentStyle={{ paddingTop: 12 }}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    dense
-                    error={!!errors.password}
-                    secureTextEntry={!showPassword}
-                    autoComplete="password"
-                    left={<TextInput.Icon icon="lock" />}
-                    right={
-                      <TextInput.Icon
-                        icon={showPassword ? 'eye-off' : 'eye'}
-                        onPress={() => setShowPassword(!showPassword)}
-                      />
-                    }
-                    style={styles.input}
-                    theme={buildInputTheme(theme, { roundness: 8 })}
-                    textColor={theme.colors.inputText}
-                    placeholderTextColor={theme.colors.inputPlaceholder}
-                  />
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      mode="outlined"
+                      label="Password"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      error={!!errors.password}
+                      secureTextEntry={!showPassword}
+                      autoComplete="password"
+                      left={
+                        <TextInput.Icon
+                          icon="lock"
+                          color={theme.colors.iconSecondary}
+                        />
+                      }
+                      right={
+                        <TextInput.Icon
+                          icon={showPassword ? 'eye-off' : 'eye'}
+                          color={theme.colors.iconSecondary}
+                          onPress={() => setShowPassword(!showPassword)}
+                        />
+                      }
+                      style={styles.input}
+                      theme={inputTheme}
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
+                      outlineStyle={[
+                        styles.inputOutline,
+                        errors.password && {
+                          borderColor: theme.colors.inputBorderError,
+                        },
+                      ]}
+                    />
+                    {errors.password && (
+                      <ThemedText
+                        style={[
+                          styles.errorText,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        {errors.password.message}
+                      </ThemedText>
+                    )}
+                  </View>
                 )}
               />
-              {errors.password && (
-                <ThemedText
-                  style={[styles.errorText, { color: theme.colors.inputError }]}
-                >
-                  {errors.password.message}
-                </ThemedText>
-              )}
 
-              {/* Forgot password */}
+              {/* Forgot Password */}
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgotPassword')}
                 style={styles.forgotPasswordButton}
@@ -193,7 +242,7 @@ export default function SignInScreen({ navigation }: Props) {
                 </ThemedText>
               </TouchableOpacity>
 
-              {/* Sign in button */}
+              {/* Sign In Button */}
               <Button
                 mode="contained"
                 onPress={handleSubmit(onSignIn)}
@@ -201,11 +250,11 @@ export default function SignInScreen({ navigation }: Props) {
                 disabled={loading || googleLoading}
                 style={[
                   styles.signInButton,
-                  { backgroundColor: theme.colors.primary },
+                  { backgroundColor: theme.colors.buttonPrimary },
                 ]}
                 labelStyle={[
                   styles.signInButtonLabel,
-                  { color: theme.colors.onTertiary },
+                  { color: theme.colors.buttonPrimaryText },
                 ]}
                 contentStyle={styles.buttonContent}
               >
@@ -217,13 +266,13 @@ export default function SignInScreen({ navigation }: Props) {
                 <View
                   style={[
                     styles.dividerLine,
-                    { backgroundColor: theme.colors.outline },
+                    { backgroundColor: theme.colors.divider },
                   ]}
                 />
                 <ThemedText
                   style={[
                     styles.dividerText,
-                    { color: theme.colors.onSurfaceVariant },
+                    { color: theme.colors.textTertiary },
                   ]}
                 >
                   or
@@ -231,12 +280,12 @@ export default function SignInScreen({ navigation }: Props) {
                 <View
                   style={[
                     styles.dividerLine,
-                    { backgroundColor: theme.colors.outline },
+                    { backgroundColor: theme.colors.divider },
                   ]}
                 />
               </View>
 
-              {/* Google Button */}
+              {/* Google Sign In Button */}
               <Button
                 mode="contained"
                 onPress={onGoogleSignIn}
@@ -246,12 +295,16 @@ export default function SignInScreen({ navigation }: Props) {
                   <MaterialIcons
                     name="login"
                     size={20}
-                    color={theme.colors.socialGoogleIcon}
+                    color={theme.colors.socialGoogleText}
                   />
                 )}
                 style={[
                   styles.googleButton,
-                  { backgroundColor: theme.colors.socialGoogleBg },
+                  {
+                    backgroundColor: theme.colors.socialGoogle,
+                    borderColor: theme.colors.socialGoogleBorder,
+                    borderWidth: 1,
+                  },
                 ]}
                 labelStyle={[
                   styles.googleButtonLabel,
@@ -270,7 +323,7 @@ export default function SignInScreen({ navigation }: Props) {
                 size="medium"
                 style={[
                   styles.footerText,
-                  { color: theme.colors.onBackground },
+                  { color: theme.colors.textSecondary },
                 ]}
               >
                 Don&apos;t have an account?{' '}
@@ -287,97 +340,120 @@ export default function SignInScreen({ navigation }: Props) {
             </View>
           </View>
         </SafeAreaView>
-      </ThemedBackground>
+      </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  backgroundImage: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.md,
+  },
   centerContent: {
-    marginBottom: 25,
+    marginBottom: theme.spacing.lg,
+    alignItems: 'center',
   },
   headingText: {
-    fontSize: 36,
+    fontSize: theme.fontSizes['4xl'],
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
+    letterSpacing: -0.5,
   },
   subHeadingText: {
-    fontSize: 16,
+    fontSize: theme.fontSizes.base,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: theme.lineHeights.base,
+    marginBottom: theme.spacing.xs,
   },
   bottomContent: {
-    paddingHorizontal: 60,
     width: '100%',
+    maxWidth: 400,
+    paddingHorizontal: theme.spacing.xl,
   },
   formContainer: {
-    marginBottom: 40,
+    marginBottom: theme.spacing['2xl'],
+  },
+  inputContainer: {
+    marginBottom: theme.spacing.md,
   },
   input: {
-    backgroundColor: 'transparent',
-    marginVertical: 8,
-    paddingTop: 8,
+    backgroundColor: theme.colors.inputBackground,
+  },
+  inputOutline: {
+    borderColor: theme.colors.inputBorder,
+    borderWidth: 1,
+    borderRadius: theme.borderRadius.md,
   },
   errorText: {
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 12,
+    fontSize: theme.fontSizes.xs,
+    marginTop: theme.spacing.xs,
+    marginLeft: theme.spacing.sm,
   },
   forgotPasswordButton: {
     alignSelf: 'flex-end',
-    marginTop: 8,
-    marginBottom: 16,
+    marginBottom: theme.spacing.lg,
   },
   forgotPasswordText: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
     textDecorationLine: 'underline',
+    fontWeight: '500',
   },
   signInButton: {
-    marginVertical: 8,
-    borderRadius: 8,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     height: 48,
   },
   signInButtonLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: theme.fontSizes.sm,
+    fontWeight: '600',
   },
   buttonContent: {
     height: 48,
-    paddingVertical: 0,
   },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 16,
+    marginVertical: theme.spacing.lg,
   },
   dividerLine: {
     flex: 1,
     height: 1,
   },
   dividerText: {
-    marginHorizontal: 16,
-    fontSize: 14,
+    marginHorizontal: theme.spacing.lg,
+    fontSize: theme.fontSizes.sm,
   },
   googleButton: {
-    marginVertical: 8,
-    borderRadius: 8,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     height: 48,
   },
   googleButtonLabel: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
+    fontWeight: '500',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: theme.spacing.md,
   },
   footerText: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
   },
   signUpText: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
     textDecorationLine: 'underline',
+    fontWeight: '500',
   },
 });

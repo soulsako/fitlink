@@ -4,17 +4,17 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
+  ImageBackground,
   Text as RNText,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
-import { Button, TextInput, useTheme } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
-import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
@@ -22,14 +22,13 @@ import {
   type ForgotPasswordFormData,
   forgotPasswordSchema,
 } from '@/schemas/authSchemas';
-import type { ExtendedTheme } from '@/styles/themes-styles';
+import { theme } from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'ForgotPassword'>;
 
 export default function ForgotPasswordScreen({ navigation }: Props) {
-  const theme = useTheme<ExtendedTheme>();
   const { sendPasswordResetEmail } = useAuth();
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -71,9 +70,10 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ThemedBackground
-        lightImage="../../../assets/images/backgrounds/forgotpassword-light.png"
-        darkImage="../../../assets/images/backgrounds/forgotpassword-dark.png"
+      <ImageBackground
+        source={require('../../../assets/images/backgrounds/forgotpassword-light.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
@@ -86,7 +86,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
               <ThemedText
                 variant="headline"
                 size="large"
-                style={[styles.headingText, { color: theme.colors.onSurface }]}
+                style={[styles.headingText, { color: theme.colors.primary }]}
                 weight="bold"
               >
                 {emailSent ? 'Check Your Email' : 'Reset Password'}
@@ -97,12 +97,12 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                 size="small"
                 style={[
                   styles.subHeadingText,
-                  { color: theme.colors.onSurface },
+                  { color: theme.colors.textSecondary },
                 ]}
               >
                 {emailSent
-                  ? 'We’ve sent a password reset link to your email. Follow the instructions to reset your password.'
-                  : "Enter your email and we'll send you a link to reset your password."}
+                  ? `We've sent a password reset link to your email. Follow the instructions to reset your password.`
+                  : `Enter your email and we'll send you a link to reset your password.`}
               </ThemedText>
             </View>
 
@@ -114,34 +114,47 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                       control={control}
                       name="email"
                       render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          mode="outlined"
-                          label="Email"
-                          value={value}
-                          onChangeText={onChange}
-                          onBlur={onBlur}
-                          error={!!errors.email}
-                          keyboardType="email-address"
-                          autoCapitalize="none"
-                          autoComplete="email"
-                          left={<TextInput.Icon icon="email" />}
-                          style={styles.input}
-                          theme={buildInputTheme(theme, { roundness: 8 })}
-                          textColor={theme.colors.inputText}
-                          placeholderTextColor={theme.colors.inputPlaceholder}
-                        />
+                        <View style={styles.inputContainer}>
+                          <TextInput
+                            mode="outlined"
+                            label="Email"
+                            value={value}
+                            onChangeText={onChange}
+                            onBlur={onBlur}
+                            error={!!errors.email}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoComplete="email"
+                            left={
+                              <TextInput.Icon
+                                icon="email"
+                                color={theme.colors.iconSecondary}
+                              />
+                            }
+                            style={styles.input}
+                            theme={buildInputTheme(theme)}
+                            textColor={theme.colors.inputText}
+                            placeholderTextColor={theme.colors.inputPlaceholder}
+                            outlineStyle={[
+                              styles.inputOutline,
+                              errors.email && {
+                                borderColor: theme.colors.inputBorderError,
+                              },
+                            ]}
+                          />
+                          {errors.email && (
+                            <ThemedText
+                              style={[
+                                styles.errorText,
+                                { color: theme.colors.error },
+                              ]}
+                            >
+                              {errors.email.message}
+                            </ThemedText>
+                          )}
+                        </View>
                       )}
                     />
-                    {errors.email && (
-                      <ThemedText
-                        style={[
-                          styles.errorText,
-                          { color: theme.colors.inputError },
-                        ]}
-                      >
-                        {errors.email.message}
-                      </ThemedText>
-                    )}
 
                     <Button
                       mode="contained"
@@ -150,11 +163,11 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                       disabled={loading}
                       style={[
                         styles.resetButton,
-                        { backgroundColor: theme.colors.primary },
+                        { backgroundColor: theme.colors.buttonPrimary },
                       ]}
                       labelStyle={[
                         styles.resetButtonLabel,
-                        { color: theme.colors.onPrimary },
+                        { color: theme.colors.buttonPrimaryText },
                       ]}
                       contentStyle={styles.buttonContent}
                     >
@@ -170,11 +183,14 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                     loading={loading}
                     style={[
                       styles.resendButton,
-                      { borderColor: theme.colors.outline },
+                      {
+                        borderColor: theme.colors.buttonOutlineBorder,
+                        backgroundColor: theme.colors.buttonOutline,
+                      },
                     ]}
                     labelStyle={[
                       styles.resendButtonLabel,
-                      { color: theme.colors.primary },
+                      { color: theme.colors.buttonOutlineText },
                     ]}
                   >
                     Resend Email
@@ -187,13 +203,13 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
                   style={styles.backButton}
                   labelStyle={[
                     styles.backButtonLabel,
-                    { color: theme.colors.onSurface },
+                    { color: theme.colors.textSecondary },
                   ]}
                 >
                   <RNText
                     style={[
                       styles.backInlineText,
-                      { color: theme.colors.onSurface },
+                      { color: theme.colors.textSecondary },
                     ]}
                   >
                     Back to{' '}
@@ -211,90 +227,110 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
             </View>
           </ScrollView>
         </SafeAreaView>
-      </ThemedBackground>
+      </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  backgroundImage: { flex: 1, width, height },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  backgroundImage: {
+    flex: 1,
+    width,
+    height,
+  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
-  safeArea: { flex: 1 },
+  safeArea: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.md,
+  },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   centerContent: {
-    marginBottom: 25,
-    paddingHorizontal: 40,
+    marginBottom: theme.spacing.lg,
+    paddingHorizontal: theme.spacing['2xl'],
+    alignItems: 'center',
   },
   headingText: {
-    fontSize: 36,
+    fontSize: theme.fontSizes['4xl'],
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
+    letterSpacing: -0.5,
   },
   subHeadingText: {
-    fontSize: 16,
+    fontSize: theme.fontSizes.base,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: theme.lineHeights.base,
   },
   bottomContent: {
-    paddingHorizontal: 60,
     width: '100%',
+    maxWidth: 400,
+    paddingHorizontal: theme.spacing.xl,
   },
   formContainer: {
-    marginBottom: 40,
+    marginBottom: theme.spacing['2xl'],
+  },
+  inputContainer: {
+    marginBottom: theme.spacing.lg,
   },
   input: {
-    backgroundColor: 'transparent',
-    marginVertical: 8,
-    paddingTop: 8,
+    backgroundColor: theme.colors.inputBackground,
+  },
+  inputOutline: {
+    borderColor: theme.colors.inputBorder,
+    borderWidth: 1,
+    borderRadius: theme.borderRadius.md,
   },
   errorText: {
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 12,
+    fontSize: theme.fontSizes.xs,
+    marginTop: theme.spacing.xs,
+    marginLeft: theme.spacing.sm,
   },
   resetButton: {
-    marginVertical: 8,
-    borderRadius: 8,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     height: 48,
   },
   resetButtonLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: theme.fontSizes.sm,
+    fontWeight: '600',
   },
   resendButton: {
-    marginTop: 16,
-    borderRadius: 8,
+    marginBottom: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     height: 48,
     borderWidth: 1,
   },
   resendButtonLabel: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
+    fontWeight: '500',
   },
   buttonContent: {
     height: 48,
-    paddingVertical: 0,
   },
   backButton: {
-    marginTop: 8,
+    marginTop: theme.spacing.md,
     flexDirection: 'row',
     justifyContent: 'center',
   },
   backButtonLabel: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
   },
   backInlineText: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
   },
   backLinkText: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
     textDecorationLine: 'underline',
+    fontWeight: '500',
   },
 });

@@ -1,6 +1,6 @@
+import { theme } from '@/styles/theme';
 import type React from 'react';
 import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
-import { useTheme } from '../../providers/ThemeProvider';
 
 interface ThemedTextProps extends RNTextProps {
   variant?: 'display' | 'headline' | 'title' | 'body' | 'label';
@@ -8,12 +8,14 @@ interface ThemedTextProps extends RNTextProps {
   color?:
     | 'primary'
     | 'secondary'
-    | 'tertiary'
-    | 'onSurface'
-    | 'onSurfaceVariant'
-    | 'government'
-    | 'nhs'
-    | 'council';
+    | 'accent'
+    | 'textPrimary'
+    | 'textSecondary'
+    | 'textTertiary'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info';
   weight?: 'regular' | 'medium' | 'semiBold' | 'bold';
 }
 
@@ -21,18 +23,71 @@ const ThemedText: React.FC<ThemedTextProps> = ({
   children,
   variant = 'body',
   size = 'medium',
-  color = 'onSurface',
+  color = 'textPrimary',
   weight = 'regular',
   style,
   ...props
 }) => {
-  const { theme } = useTheme();
+  const getFontSize = () => {
+    const sizeMap = {
+      display: {
+        small: theme.fontSizes['3xl'],
+        medium: theme.fontSizes['4xl'],
+        large: theme.fontSizes['5xl'],
+      },
+      headline: {
+        small: theme.fontSizes['2xl'],
+        medium: theme.fontSizes['3xl'],
+        large: theme.fontSizes['4xl'],
+      },
+      title: {
+        small: theme.fontSizes.lg,
+        medium: theme.fontSizes.xl,
+        large: theme.fontSizes['2xl'],
+      },
+      body: {
+        small: theme.fontSizes.sm,
+        medium: theme.fontSizes.base,
+        large: theme.fontSizes.lg,
+      },
+      label: {
+        small: theme.fontSizes.xs,
+        medium: theme.fontSizes.sm,
+        large: theme.fontSizes.base,
+      },
+    };
+    return sizeMap[variant][size];
+  };
 
-  const getVariantStyle = () => {
-    const key = `${variant}${
-      size.charAt(0).toUpperCase() + size.slice(1)
-    }` as keyof typeof theme.fonts;
-    return theme.fonts[key] || theme.fonts.bodyMedium;
+  const getLineHeight = () => {
+    const lineHeightMap = {
+      display: {
+        small: theme.lineHeights['3xl'],
+        medium: theme.lineHeights['4xl'],
+        large: theme.lineHeights['5xl'],
+      },
+      headline: {
+        small: theme.lineHeights['2xl'],
+        medium: theme.lineHeights['3xl'],
+        large: theme.lineHeights['4xl'],
+      },
+      title: {
+        small: theme.lineHeights.lg,
+        medium: theme.lineHeights.xl,
+        large: theme.lineHeights['2xl'],
+      },
+      body: {
+        small: theme.lineHeights.sm,
+        medium: theme.lineHeights.base,
+        large: theme.lineHeights.lg,
+      },
+      label: {
+        small: theme.lineHeights.xs,
+        medium: theme.lineHeights.sm,
+        large: theme.lineHeights.base,
+      },
+    };
+    return lineHeightMap[variant][size];
   };
 
   const getColorValue = () => {
@@ -41,37 +96,42 @@ const ThemedText: React.FC<ThemedTextProps> = ({
         return theme.colors.primary;
       case 'secondary':
         return theme.colors.secondary;
-      case 'tertiary':
-        return theme.colors.tertiary;
-      case 'government':
-        return theme.colors.government;
-      case 'nhs':
-        return theme.colors.nhs;
-      case 'council':
-        return theme.colors.council;
-      case 'onSurface':
-        return theme.colors.onSurface;
-      case 'onSurfaceVariant':
-        return theme.colors.onSurfaceVariant;
+      case 'accent':
+        return theme.colors.accent;
+      case 'textPrimary':
+        return theme.colors.textPrimary;
+      case 'textSecondary':
+        return theme.colors.textSecondary;
+      case 'textTertiary':
+        return theme.colors.textTertiary;
+      case 'success':
+        return theme.colors.success;
+      case 'warning':
+        return theme.colors.warning;
+      case 'error':
+        return theme.colors.error;
+      case 'info':
+        return theme.colors.info;
       default:
-        return theme.colors.onSurface;
+        return theme.colors.textPrimary;
     }
   };
 
   const getFontFamily = () => {
     switch (weight) {
       case 'medium':
-        return 'Inter_500Medium';
+        return theme.fonts.medium;
       case 'semiBold':
-        return 'Inter_600SemiBold';
+        return theme.fonts.semiBold;
       case 'bold':
-        return 'Inter_700Bold';
+        return theme.fonts.bold;
       default:
-        return 'Inter_400Regular';
+        return theme.fonts.regular;
     }
   };
 
-  const variantStyle = getVariantStyle();
+  const fontSize = getFontSize();
+  const lineHeight = getLineHeight();
   const textColor = getColorValue();
   const fontFamily = getFontFamily();
 
@@ -81,23 +141,8 @@ const ThemedText: React.FC<ThemedTextProps> = ({
         {
           color: textColor,
           fontFamily,
-          // Safely extract fontSize and lineHeight if they exist
-          ...(variantStyle &&
-            'fontSize' in variantStyle && { fontSize: variantStyle.fontSize }),
-          ...(variantStyle &&
-            'lineHeight' in variantStyle && {
-              lineHeight: variantStyle.lineHeight,
-            }),
-          // Include any other properties from variantStyle except fontFamily (since we override it)
-          ...(variantStyle &&
-            Object.fromEntries(
-              Object.entries(variantStyle).filter(
-                ([key]) =>
-                  key !== 'fontFamily' &&
-                  key !== 'fontSize' &&
-                  key !== 'lineHeight',
-              ),
-            )),
+          fontSize,
+          lineHeight,
         },
         style,
       ]}

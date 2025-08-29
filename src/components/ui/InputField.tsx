@@ -1,11 +1,11 @@
 // src/components/ui/InputField.tsx
 
+import { theme } from '@/styles/theme';
 import type { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { HelperText, TextInput } from 'react-native-paper';
-import { useTheme } from '../../providers/ThemeProvider';
 
 interface InputFieldProps {
   label: string;
@@ -44,7 +44,6 @@ const InputField: React.FC<InputFieldProps> = ({
   editable = true,
   style,
 }) => {
-  const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleRightIconPress = () => {
@@ -60,6 +59,20 @@ const InputField: React.FC<InputFieldProps> = ({
       return showPassword ? 'visibility-off' : 'visibility';
     }
     return rightIcon;
+  };
+
+  // Custom input theme for React Native Paper
+  const inputTheme = {
+    colors: {
+      primary: theme.colors.inputBorderFocus,
+      outline: theme.colors.inputBorder,
+      outlineVariant: theme.colors.inputBorder,
+      onSurfaceVariant: theme.colors.inputPlaceholder,
+      onSurface: theme.colors.inputText,
+      surface: theme.colors.inputBackground,
+      surfaceVariant: theme.colors.inputBackground,
+      error: theme.colors.inputBorderError,
+    },
   };
 
   return (
@@ -78,11 +91,17 @@ const InputField: React.FC<InputFieldProps> = ({
         maxLength={maxLength}
         editable={editable}
         mode="outlined"
-        style={[styles.input, { backgroundColor: theme.colors.surface }]}
-        outlineColor={theme.colors.outline}
-        activeOutlineColor={theme.colors.primary}
-        textColor={theme.colors.onSurface}
-        placeholderTextColor={theme.colors.onSurfaceVariant}
+        style={[
+          styles.input,
+          { backgroundColor: theme.colors.inputBackground },
+        ]}
+        theme={inputTheme}
+        textColor={theme.colors.inputText}
+        placeholderTextColor={theme.colors.inputPlaceholder}
+        outlineStyle={[
+          styles.inputOutline,
+          error && { borderColor: theme.colors.inputBorderError },
+        ]}
         left={
           leftIcon ? <TextInput.Icon icon={leftIcon} size={20} /> : undefined
         }
@@ -96,8 +115,9 @@ const InputField: React.FC<InputFieldProps> = ({
           ) : undefined
         }
         contentStyle={{
-          fontFamily: 'Inter_400Regular',
-          fontSize: 16,
+          fontFamily: theme.fonts.regular,
+          fontSize: theme.fontSizes.base,
+          paddingHorizontal: theme.spacing.sm,
         }}
       />
       {error && (
@@ -105,8 +125,11 @@ const InputField: React.FC<InputFieldProps> = ({
           type="error"
           visible={!!error}
           style={{
-            fontFamily: 'Inter_400Regular',
+            fontFamily: theme.fonts.regular,
+            fontSize: theme.fontSizes.xs,
             color: theme.colors.error,
+            marginLeft: theme.spacing.sm,
+            marginTop: theme.spacing.xs,
           }}
         >
           {error}
@@ -118,10 +141,15 @@ const InputField: React.FC<InputFieldProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 6,
+    marginVertical: theme.spacing.sm,
   },
   input: {
     backgroundColor: 'transparent',
+  },
+  inputOutline: {
+    borderColor: theme.colors.inputBorder,
+    borderWidth: 1,
+    borderRadius: theme.borderRadius.md,
   },
 });
 

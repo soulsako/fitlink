@@ -5,28 +5,28 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
+  ImageBackground,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, TextInput, useTheme } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
-import { ThemedBackground } from '@/components/ThemeBackground';
 import BackButton from '@/components/ui/BackButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
 import { type SignUpFormData, signUpSchema } from '@/schemas/authSchemas';
+import theme from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'SignUp'>;
 
 export default function SignUpScreen({ navigation }: Props) {
-  const theme = useTheme();
   const { signUp, signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -88,9 +88,10 @@ export default function SignUpScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <ThemedBackground
-        lightImage={require('../../../assets/images/backgrounds/signup-light.png')}
-        darkImage={require('../../../assets/images/backgrounds/signup-dark.png')}
+      <ImageBackground
+        src={require('../../../assets/images/backgrounds/signup-light.png')}
+        resizeMode="cover"
+        style={styles.backgroundImage}
       >
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
@@ -135,7 +136,7 @@ export default function SignUpScreen({ navigation }: Props) {
                       left={<TextInput.Icon icon="account" />}
                       style={styles.input}
                       theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor={theme.colors.onSurface}
+                      textColor={theme.colors.white}
                       placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
                   )}
@@ -164,20 +165,7 @@ export default function SignUpScreen({ navigation }: Props) {
                       autoComplete="email"
                       left={<TextInput.Icon icon="email" />}
                       style={styles.input}
-                      theme={{
-                        colors: {
-                          onSurface: theme.colors.onPrimary,
-                          onSurfaceVariant: theme.colors.onPrimary,
-                          outline: theme.colors.onPrimary,
-                          primary: theme.colors.primary,
-                          background: 'transparent',
-                          onSurfaceDisabled: theme.colors.onPrimary,
-                          secondary: theme.colors.onPrimary,
-                          onSecondary: theme.colors.onPrimary,
-                          surfaceVariant: 'transparent',
-                        },
-                        roundness: 8,
-                      }}
+                      theme={buildInputTheme(theme)}
                       textColor="#000000"
                       placeholderTextColor="rgba(0, 0, 0, 0.7)"
                     />
@@ -270,7 +258,7 @@ export default function SignUpScreen({ navigation }: Props) {
                   disabled={loading || googleLoading}
                   style={[
                     styles.signUpButton,
-                    { backgroundColor: theme.colors.tertiary },
+                    { backgroundColor: theme.colors.primary },
                   ]}
                   labelStyle={styles.signUpButtonLabel}
                   contentStyle={styles.buttonContent}
@@ -321,7 +309,7 @@ export default function SignUpScreen({ navigation }: Props) {
             </View>
           </ScrollView>
         </SafeAreaView>
-      </ThemedBackground>
+      </ImageBackground>
     </View>
   );
 }
