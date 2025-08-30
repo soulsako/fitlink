@@ -1,4 +1,4 @@
-import { useTheme } from '@/providers/ThemeProvider'; // <-- your context hook
+import { theme } from '@/styles/theme';
 import { AntDesign, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
 import {
@@ -18,6 +18,7 @@ interface SocialButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   iconColor?: string;
+  backgroundColor?: string;
 }
 
 const SocialButton: React.FC<SocialButtonProps> = ({
@@ -26,10 +27,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   disabled = false,
   style,
   textStyle,
+  backgroundColor,
   iconColor,
 }) => {
-  const { theme } = useTheme(); // ✅ gives ExtendedTheme with custom colors
-
   const config: Record<
     Provider,
     {
@@ -42,53 +42,53 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   > = {
     google: {
       text: 'Continue with Google',
-      backgroundColor: theme.colors.socialGoogleBg,
-      textColor: theme.colors.socialGoogleText,
+      backgroundColor: backgroundColor ?? theme.colors.primary,
+      textColor: theme.colors.white,
       borderColor: theme.colors.socialGoogleBorder,
       renderIcon: () => (
         <AntDesign
           name="google"
           size={20}
-          color={iconColor ?? theme.colors.socialGoogleIcon}
+          color={iconColor ?? theme.colors.white}
         />
       ),
     },
     apple: {
       text: 'Continue with Apple',
-      backgroundColor: theme.colors.socialAppleBg,
+      backgroundColor: theme.colors.socialApple,
       textColor: theme.colors.socialAppleText,
       borderColor: theme.colors.socialAppleBorder,
       renderIcon: () => (
         <FontAwesome
           name="apple"
           size={22}
-          color={iconColor ?? theme.colors.socialAppleIcon}
+          color={iconColor ?? theme.colors.socialAppleText}
         />
       ),
     },
     facebook: {
       text: 'Continue with Facebook',
-      backgroundColor: theme.colors.socialFacebookBg,
+      backgroundColor: theme.colors.socialFacebook,
       textColor: theme.colors.socialFacebookText,
       borderColor: theme.colors.socialFacebookBorder,
       renderIcon: () => (
         <FontAwesome
           name="facebook"
           size={20}
-          color={iconColor ?? theme.colors.socialFacebookIcon}
+          color={iconColor ?? theme.colors.socialFacebookText}
         />
       ),
     },
     email: {
       text: 'Continue with Email',
-      backgroundColor: theme.colors.surface,
-      textColor: theme.colors.onSurface,
-      borderColor: theme.colors.outline,
+      backgroundColor: theme.colors.socialGoogle,
+      textColor: theme.colors.black,
+      borderColor: theme.colors.gray300,
       renderIcon: () => (
         <MaterialIcons
           name="email"
           size={20}
-          color={iconColor ?? theme.colors.onSurface}
+          color={iconColor ?? theme.colors.black}
         />
       ),
     },
@@ -128,17 +128,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    gap: theme.spacing.sm,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    marginVertical: 6,
+    marginVertical: theme.spacing.sm,
     minHeight: 48,
   },
   text: {
-    fontSize: 16,
+    fontSize: theme.fontSizes.base,
     fontWeight: '500',
+    fontFamily: theme.fonts.medium,
   },
 });
 

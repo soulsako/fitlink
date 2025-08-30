@@ -1,4 +1,3 @@
-// src/types/navigation.ts
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -9,12 +8,14 @@ export type AuthStackParamList = {
   SignUp: undefined;
   ForgotPassword: undefined;
   ResetPassword: { token?: string };
+};
+
+// Onboarding Stack - Separate stack for post-auth onboarding
+export type OnboardingStackParamList = {
   LocationPermission: undefined;
   AddressConfirmation: {
     coordinates?: { latitude: number; longitude: number };
   };
-  PhoneVerification: undefined;
-  CodeVerification: { phoneNumber: string };
 };
 
 // Main Tab Stack - Updated for LocalMind features
@@ -25,15 +26,20 @@ export type MainTabParamList = {
   Profile: undefined;
 };
 
-// Root Stack
+// Root Stack - Updated to include onboarding flow
 export type RootStackParamList = {
   Auth: undefined;
+  LocationOnboarding: undefined;
   Main: undefined;
 };
 
 // Screen Props
 export type AuthStackScreenProps<T extends keyof AuthStackParamList> =
   NativeStackScreenProps<AuthStackParamList, T>;
+
+export type OnboardingStackScreenProps<
+  T extends keyof OnboardingStackParamList,
+> = NativeStackScreenProps<OnboardingStackParamList, T>;
 
 export type MainTabScreenProps<T extends keyof MainTabParamList> =
   BottomTabScreenProps<MainTabParamList, T>;

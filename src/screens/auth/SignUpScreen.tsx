@@ -1,32 +1,28 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
-  Dimensions,
-  ImageBackground,
-  ScrollView,
+  Keyboard,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, TextInput, useTheme } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const { width, height } = Dimensions.get('window');
-
+import ScreenBackground from '@/components/ScreenBackground';
 import BackButton from '@/components/ui/BackButton';
+import SocialButton from '@/components/ui/SocialButton';
 import ThemedText from '@/components/ui/ThemedText';
 import { useAuth } from '@/providers/AuthProvider';
 import { type SignUpFormData, signUpSchema } from '@/schemas/authSchemas';
+import { theme } from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
-import { buildInputTheme } from '@/utils/paperInputTheme';
 
 type Props = AuthStackScreenProps<'SignUp'>;
 
 export default function SignUpScreen({ navigation }: Props) {
-  const theme = useTheme();
   const { signUp, signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -86,44 +82,59 @@ export default function SignUpScreen({ navigation }: Props) {
     }
   };
 
+  // Custom input theme for React Native Paper
+  const inputTheme = {
+    colors: {
+      primary: theme.colors.inputBorderFocus,
+      outline: theme.colors.inputBorder,
+      outlineVariant: theme.colors.inputBorder,
+      onSurfaceVariant: theme.colors.inputPlaceholder,
+      onSurface: theme.colors.inputText,
+      surface: theme.colors.inputBackground,
+      surfaceVariant: theme.colors.inputBackground,
+      error: theme.colors.inputBorderError,
+      onBackground: theme.colors.inputText,
+      background: theme.colors.inputBackground,
+    },
+  };
+
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/images/backgrounds/signup.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <ScreenBackground
+        source={require('../../../assets/images/backgrounds/welcome-light.png')}
       >
-        <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
           <BackButton fallbackRoute="Welcome" />
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.centerContent}>
-              <ThemedText
-                variant="headline"
-                size="large"
-                style={styles.headingText}
-                weight="bold"
-              >
-                Join Local Mind
-              </ThemedText>
-              <ThemedText
-                variant="body"
-                size="small"
-                style={styles.subHeadingText}
-              >
-                Create your account to get started
-              </ThemedText>
-            </View>
 
-            <View style={styles.bottomContent}>
-              <View style={styles.formContainer}>
-                <Controller
-                  control={control}
-                  name="fullName"
-                  render={({ field: { onChange, onBlur, value } }) => (
+          <View style={styles.centerContent}>
+            <ThemedText
+              variant="headline"
+              size="large"
+              style={[styles.headingText, { color: theme.colors.primary }]}
+              weight="bold"
+            >
+              Join Local Mind
+            </ThemedText>
+            <ThemedText
+              variant="body"
+              size="small"
+              style={[
+                styles.subHeadingText,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
+              Create your account to get started
+            </ThemedText>
+          </View>
+
+          <View style={styles.bottomContent}>
+            <View style={styles.formContainer}>
+              {/* Full Name Input */}
+              <Controller
+                control={control}
+                name="fullName"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View style={styles.inputContainer}>
                     <TextInput
                       mode="outlined"
                       label="Full Name"
@@ -133,26 +144,47 @@ export default function SignUpScreen({ navigation }: Props) {
                       error={!!errors.fullName}
                       autoCapitalize="words"
                       autoComplete="name"
-                      left={<TextInput.Icon icon="account" />}
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
+                      left={
+                        <TextInput.Icon
+                          icon="account"
+                          color={theme.colors.iconSecondary}
+                        />
+                      }
                       style={styles.input}
-                      theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor={theme.colors.onSurface}
-                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                      theme={inputTheme}
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
+                      outlineStyle={[
+                        styles.inputOutline,
+                        errors.fullName && {
+                          borderColor: theme.colors.inputBorderError,
+                        },
+                      ]}
                     />
-                  )}
-                />
-                {errors.fullName && (
-                  <ThemedText
-                    style={[styles.errorText, { color: theme.colors.error }]}
-                  >
-                    {errors.fullName.message}
-                  </ThemedText>
+                    {errors.fullName && (
+                      <ThemedText
+                        style={[
+                          styles.errorText,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        {errors.fullName.message}
+                      </ThemedText>
+                    )}
+                  </View>
                 )}
+              />
 
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({ field: { onChange, onBlur, value } }) => (
+              {/* Email Input */}
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View style={styles.inputContainer}>
                     <TextInput
                       mode="outlined"
                       label="Email"
@@ -163,39 +195,47 @@ export default function SignUpScreen({ navigation }: Props) {
                       keyboardType="email-address"
                       autoCapitalize="none"
                       autoComplete="email"
-                      left={<TextInput.Icon icon="email" />}
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
+                      left={
+                        <TextInput.Icon
+                          icon="email"
+                          color={theme.colors.iconSecondary}
+                        />
+                      }
                       style={styles.input}
-                      theme={{
-                        colors: {
-                          onSurface: theme.colors.onPrimary,
-                          onSurfaceVariant: theme.colors.onPrimary,
-                          outline: theme.colors.onPrimary,
-                          primary: theme.colors.primary,
-                          background: 'transparent',
-                          onSurfaceDisabled: theme.colors.onPrimary,
-                          secondary: theme.colors.onPrimary,
-                          onSecondary: theme.colors.onPrimary,
-                          surfaceVariant: 'transparent',
+                      theme={inputTheme}
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
+                      outlineStyle={[
+                        styles.inputOutline,
+                        errors.email && {
+                          borderColor: theme.colors.inputBorderError,
                         },
-                        roundness: 8,
-                      }}
-                      textColor="#000000"
-                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                      ]}
                     />
-                  )}
-                />
-                {errors.email && (
-                  <ThemedText
-                    style={[styles.errorText, { color: theme.colors.error }]}
-                  >
-                    {errors.email.message}
-                  </ThemedText>
+                    {errors.email && (
+                      <ThemedText
+                        style={[
+                          styles.errorText,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        {errors.email.message}
+                      </ThemedText>
+                    )}
+                  </View>
                 )}
+              />
 
-                <Controller
-                  control={control}
-                  name="password"
-                  render={({ field: { onChange, onBlur, value } }) => (
+              {/* Password Input */}
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View style={styles.inputContainer}>
                     <TextInput
                       mode="outlined"
                       label="Password"
@@ -205,7 +245,16 @@ export default function SignUpScreen({ navigation }: Props) {
                       error={!!errors.password}
                       secureTextEntry={!showPassword}
                       autoComplete="new-password"
-                      left={<TextInput.Icon icon="lock" />}
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
+                      left={
+                        <TextInput.Icon
+                          icon="lock"
+                          color={theme.colors.iconSecondary}
+                        />
+                      }
                       right={
                         <TextInput.Icon
                           icon={showPassword ? 'eye-off' : 'eye'}
@@ -213,34 +262,55 @@ export default function SignUpScreen({ navigation }: Props) {
                         />
                       }
                       style={styles.input}
-                      theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor="#000000"
-                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                      theme={inputTheme}
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
+                      outlineStyle={[
+                        styles.inputOutline,
+                        errors.password && {
+                          borderColor: theme.colors.inputBorderError,
+                        },
+                      ]}
                     />
-                  )}
-                />
-                {errors.password && (
-                  <ThemedText
-                    style={[styles.errorText, { color: theme.colors.error }]}
-                  >
-                    {errors.password.message}
-                  </ThemedText>
+                    {errors.password && (
+                      <ThemedText
+                        style={[
+                          styles.errorText,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        {errors.password.message}
+                      </ThemedText>
+                    )}
+                  </View>
                 )}
+              />
 
-                <Controller
-                  control={control}
-                  name="confirmPassword"
-                  render={({ field: { onChange, onBlur, value } }) => (
+              {/* Confirm Password Input */}
+              <Controller
+                control={control}
+                name="confirmPassword"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View style={styles.inputContainer}>
                     <TextInput
                       mode="outlined"
                       label="Confirm Password"
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
+                      returnKeyType="done"
+                      submitBehavior="blurAndSubmit"
+                      multiline={false}
+                      onSubmitEditing={() => Keyboard.dismiss()}
                       error={!!errors.confirmPassword}
                       secureTextEntry={!showConfirmPassword}
                       autoComplete="new-password"
-                      left={<TextInput.Icon icon="lock-check" />}
+                      left={
+                        <TextInput.Icon
+                          icon="lock-check"
+                          color={theme.colors.iconSecondary}
+                        />
+                      }
                       right={
                         <TextInput.Icon
                           icon={showConfirmPassword ? 'eye-off' : 'eye'}
@@ -250,175 +320,212 @@ export default function SignUpScreen({ navigation }: Props) {
                         />
                       }
                       style={styles.input}
-                      theme={buildInputTheme(theme, { roundness: 8 })}
-                      textColor="#000000"
-                      placeholderTextColor="rgba(0, 0, 0, 0.7)"
+                      theme={inputTheme}
+                      textColor={theme.colors.inputText}
+                      placeholderTextColor={theme.colors.inputPlaceholder}
+                      outlineStyle={[
+                        styles.inputOutline,
+                        errors.confirmPassword && {
+                          borderColor: theme.colors.inputBorderError,
+                        },
+                      ]}
                     />
-                  )}
-                />
-                {errors.confirmPassword && (
-                  <ThemedText
-                    style={[styles.errorText, { color: theme.colors.error }]}
-                  >
-                    {errors.confirmPassword.message}
-                  </ThemedText>
+                    {errors.confirmPassword && (
+                      <ThemedText
+                        style={[
+                          styles.errorText,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        {errors.confirmPassword.message}
+                      </ThemedText>
+                    )}
+                  </View>
                 )}
+              />
 
-                <Button
-                  mode="contained"
-                  onPress={handleSubmit(onSignUp)}
-                  loading={loading}
-                  disabled={loading || googleLoading}
+              {/* Sign Up Button */}
+              <Button
+                mode="contained"
+                onPress={handleSubmit(onSignUp)}
+                loading={loading}
+                disabled={loading || googleLoading}
+                style={[
+                  styles.signUpButton,
+                  { backgroundColor: theme.colors.buttonPrimary },
+                ]}
+                labelStyle={[
+                  styles.signUpButtonLabel,
+                  { color: theme.colors.buttonPrimaryText },
+                ]}
+                contentStyle={styles.buttonContent}
+              >
+                Create Account
+              </Button>
+
+              {/* Divider */}
+              <View style={styles.dividerContainer}>
+                <View
                   style={[
-                    styles.signUpButton,
-                    { backgroundColor: theme.colors.tertiary },
+                    styles.dividerLine,
+                    { backgroundColor: theme.colors.divider },
                   ]}
-                  labelStyle={styles.signUpButtonLabel}
-                  contentStyle={styles.buttonContent}
+                />
+                <ThemedText
+                  style={[
+                    styles.dividerText,
+                    { color: theme.colors.textTertiary },
+                  ]}
                 >
-                  Create Account
-                </Button>
-
-                <View style={styles.dividerContainer}>
-                  <View style={styles.dividerLine} />
-                  <ThemedText style={styles.dividerText}>or</ThemedText>
-                  <View style={styles.dividerLine} />
-                </View>
-
-                <Button
-                  mode="contained"
-                  onPress={onGoogleSignUp}
-                  loading={googleLoading}
-                  disabled={loading || googleLoading}
-                  icon={() => (
-                    <MaterialIcons name="login" size={20} color="#000000" />
-                  )}
-                  style={styles.googleButton}
-                  labelStyle={styles.googleButtonLabel}
-                  contentStyle={styles.buttonContent}
-                >
-                  Continue with Google
-                </Button>
+                  or
+                </ThemedText>
+                <View
+                  style={[
+                    styles.dividerLine,
+                    { backgroundColor: theme.colors.divider },
+                  ]}
+                />
               </View>
 
-              <View style={styles.footer}>
+              {/* Google Sign Up Button */}
+              <SocialButton
+                provider="google"
+                onPress={onGoogleSignUp}
+                disabled={loading || googleLoading}
+                style={styles.socialButton}
+                backgroundColor={theme.colors.black}
+              />
+            </View>
+
+            {/* Footer */}
+            <View style={styles.footer}>
+              <ThemedText
+                variant="body"
+                size="medium"
+                style={[
+                  styles.footerText,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
+                Already have an account?{' '}
+              </ThemedText>
+              <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
                 <ThemedText
                   variant="body"
                   size="medium"
-                  style={[styles.footerText, { color: '#FFFFFF' }]}
+                  style={[styles.signInText, { color: theme.colors.primary }]}
                 >
-                  Already have an account?{' '}
+                  Sign In
                 </ThemedText>
-                <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-                  <ThemedText
-                    variant="body"
-                    size="medium"
-                    style={[styles.signInText, { color: '#FFFFFF' }]}
-                  >
-                    Sign In
-                  </ThemedText>
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             </View>
-          </ScrollView>
+          </View>
         </SafeAreaView>
-      </ImageBackground>
+      </ScreenBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  backgroundImage: { flex: 1, width, height },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
   },
-  safeArea: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
+  safeArea: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: theme.spacing.md,
   },
   centerContent: {
-    marginBottom: 25,
+    marginBottom: theme.spacing.lg,
+    alignItems: 'center',
   },
   headingText: {
-    fontSize: 36,
+    fontSize: theme.fontSizes['4xl'],
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
+    letterSpacing: -0.5,
   },
   subHeadingText: {
-    fontSize: 16,
+    fontSize: theme.fontSizes.base,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: theme.lineHeights.base,
+    marginBottom: theme.spacing.xs,
   },
   bottomContent: {
-    paddingHorizontal: 60,
     width: '100%',
+    maxWidth: 400,
+    paddingHorizontal: theme.spacing.xl,
   },
   formContainer: {
-    marginBottom: 40,
+    marginBottom: theme.spacing['2xl'],
+  },
+  inputContainer: {
+    marginBottom: theme.spacing.md,
   },
   input: {
-    backgroundColor: 'transparent',
-    marginVertical: 8,
-    paddingTop: 8,
+    backgroundColor: theme.colors.inputBackground,
+  },
+  inputOutline: {
+    borderColor: theme.colors.inputBorder,
+    borderWidth: 1,
+    borderRadius: theme.borderRadius.md,
   },
   errorText: {
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 12,
+    fontSize: theme.fontSizes.xs,
+    marginTop: theme.spacing.xs,
+    marginLeft: theme.spacing.sm,
   },
   signUpButton: {
-    marginVertical: 8,
-    borderRadius: 8,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     height: 48,
   },
   signUpButtonLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontSize: theme.fontSizes.sm,
+    fontWeight: '600',
   },
   buttonContent: {
     height: 48,
-    paddingVertical: 0,
   },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 16,
+    marginVertical: theme.spacing.lg,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#000000',
   },
   dividerText: {
-    marginHorizontal: 16,
-    color: '#000000',
-    fontSize: 14,
+    marginHorizontal: theme.spacing.lg,
+    fontSize: theme.fontSizes.sm,
   },
   googleButton: {
-    marginVertical: 8,
-    backgroundColor: '#000000',
-    borderRadius: 8,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     height: 48,
   },
   googleButtonLabel: {
-    fontSize: 14,
-    color: '#FFFFFF',
+    fontSize: theme.fontSizes.sm,
+    fontWeight: '500',
+  },
+  socialButton: {
+    marginVertical: theme.spacing.xs,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: theme.spacing.md,
   },
   footerText: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
   },
   signInText: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.sm,
     textDecorationLine: 'underline',
+    fontWeight: '500',
   },
 });

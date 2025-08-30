@@ -1,9 +1,8 @@
-import { ThemedBackground } from '@/components/ThemeBackground';
+import ScreenBackground from '@/components/ScreenBackground';
 import SocialButton from '@/components/ui/SocialButton';
 import ThemedText from '@/components/ui/ThemedText';
-import { ThemeToggleButton } from '@/components/ui/ThemeToggleButton';
 import { useAuth } from '@/providers/AuthProvider';
-import { useTheme } from '@/providers/ThemeProvider';
+import theme from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
@@ -12,9 +11,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 type AuthLoginScreenProps = AuthStackScreenProps<'Welcome'>;
 
-const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
+const WelcomeScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
   const { signInWithGoogle } = useAuth();
-  const { theme } = useTheme();
 
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();
@@ -29,13 +27,10 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <ThemedBackground
-        lightImage={require('../../../assets/images/backgrounds/welcome-light.png')}
-        darkImage={require('../../../assets/images/backgrounds/welcome-dark.png')}
+      <ScreenBackground
+        source={require('../../../assets/images/backgrounds/welcome-light.png')}
       >
         <SafeAreaView style={styles.safeArea}>
-          <ThemeToggleButton />
-
           <View style={styles.centerContent}>
             <ThemedText
               variant="headline"
@@ -50,20 +45,20 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
               size="small"
               style={[
                 styles.subHeadingText,
-                { color: theme.colors.onBackground },
+                { color: theme.colors.textSecondary },
               ]}
             >
-              Smart, secure sign-in to
+              Smart, secure sign-in to your
             </ThemedText>
             <ThemedText
               variant="body"
               size="small"
               style={[
                 styles.subHeadingText,
-                { color: theme.colors.onBackground },
+                { color: theme.colors.textSecondary },
               ]}
             >
-              your community hub
+              community hub
             </ThemedText>
           </View>
 
@@ -93,20 +88,23 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
 
             <View style={styles.footer}>
               <TouchableOpacity
-                style={styles.footerButton}
+                style={[
+                  styles.footerButton,
+                  { backgroundColor: theme.colors.white },
+                ]}
                 onPress={handleLanguagePress}
               >
                 <MaterialIcons
                   name="language"
                   size={20}
-                  color={theme.colors.onBackground}
+                  color={theme.colors.textSecondary}
                 />
                 <ThemedText
                   variant="body"
                   size="medium"
                   style={[
                     styles.footerText,
-                    { color: theme.colors.onBackground },
+                    { color: theme.colors.textSecondary },
                   ]}
                 >
                   EN (US)
@@ -114,7 +112,7 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
                 <MaterialIcons
                   name="keyboard-arrow-down"
                   size={20}
-                  color={theme.colors.onBackground}
+                  color={theme.colors.textSecondary}
                 />
               </TouchableOpacity>
 
@@ -130,42 +128,77 @@ const AuthLoginScreen: React.FC<AuthLoginScreenProps> = ({ navigation }) => {
             </View>
           </View>
         </SafeAreaView>
-      </ThemedBackground>
+      </ScreenBackground>
     </View>
   );
 };
 
+export default WelcomeScreen;
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  safeArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  backgroundImage: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.md,
+  },
   centerContent: {
     marginBottom: 50,
+    alignItems: 'center',
   },
   headingText: {
-    fontSize: 36,
+    fontSize: theme.fontSizes['4xl'],
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
+    letterSpacing: -0.5,
   },
   subHeadingText: {
-    fontSize: 16,
+    fontSize: theme.fontSizes.base,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: theme.lineHeights.sm,
+    marginBottom: theme.spacing.xs,
   },
   bottomContent: {
-    paddingHorizontal: 24,
+    width: '100%',
+    maxWidth: 320,
+    paddingHorizontal: theme.spacing.lg,
   },
-  buttonContainer: { marginBottom: 100 },
+  buttonContainer: {
+    marginBottom: theme.spacing['3xl'],
+    gap: theme.spacing.sm,
+  },
   socialButton: {
-    marginVertical: 8,
+    marginVertical: theme.spacing.xs,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: theme.spacing.md,
   },
-  footerButton: { flexDirection: 'row', alignItems: 'center' },
-  footerText: { marginHorizontal: 8, fontSize: 14 },
-  inviteText: { fontSize: 14, textDecorationLine: 'underline' },
+  footerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.white,
+  },
+  footerText: {
+    marginHorizontal: theme.spacing.xs,
+    fontSize: theme.fontSizes.sm,
+  },
+  inviteText: {
+    fontSize: theme.fontSizes.sm,
+    textDecorationLine: 'underline',
+    fontWeight: '500',
+  },
 });
-
-export default AuthLoginScreen;

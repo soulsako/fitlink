@@ -1,5 +1,6 @@
-// src/screens/onboarding/AddressConfirmationScreen.tsx
-
+import PrimaryButton from '@/components/ui/PrimaryButton';
+import ProgressIndicator from '@/components/ui/ProgressIndicator';
+import type { AuthStackScreenProps } from '@/types/navigation';
 import * as Location from 'expo-location';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,9 +19,6 @@ import {
   useTheme,
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import PrimaryButton from '../../components/ui/PrimaryButton';
-import ProgressIndicator from '../../components/ui/ProgressIndicator';
-import type { AuthStackScreenProps } from '../../types/navigation';
 
 type AddressConfirmationScreenProps =
   AuthStackScreenProps<'AddressConfirmation'>;
