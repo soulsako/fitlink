@@ -19,7 +19,7 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({
   source,
   children,
   overlayOpacity = 0.1,
-  overlayColor = 'rgba(0, 0, 0, 0.10)',
+  overlayColor = 'rgba(0, 0, 0, 0.0.20)',
   style,
 }) => {
   return (

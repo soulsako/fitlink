@@ -12,6 +12,7 @@ import SignInScreen from '../screens/auth/SignInScreen';
 import SignUpScreen from '../screens/auth/SignUpScreen';
 import MessagesScreen from '../screens/MessagesScreen/MessagesScreen';
 import AddressConfirmationScreen from '../screens/onboarding/AddressConfirmationScreen';
+import LocationPermissionScreen from '../screens/onboarding/LocationPermissionScreen';
 import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
 import type {
   AuthStackParamList,
@@ -22,6 +23,12 @@ import type {
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const MainTab = createBottomTabNavigator<MainTabParamList>();
 const RootStack = createNativeStackNavigator<RootStackParamList>();
+const OnboardingStack = createNativeStackNavigator<{
+  LocationPermission: undefined;
+  AddressConfirmation: {
+    coordinates?: { latitude: number; longitude: number };
+  };
+}>();
 
 function AuthNavigator() {
   return (
@@ -37,11 +44,25 @@ function AuthNavigator() {
         component={ForgotPasswordScreen}
       />
       <AuthStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-      <AuthStack.Screen
+    </AuthStack.Navigator>
+  );
+}
+
+function OnboardingNavigator() {
+  return (
+    <OnboardingStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="LocationPermission"
+    >
+      <OnboardingStack.Screen
+        name="LocationPermission"
+        component={LocationPermissionScreen}
+      />
+      <OnboardingStack.Screen
         name="AddressConfirmation"
         component={AddressConfirmationScreen}
       />
-    </AuthStack.Navigator>
+    </OnboardingStack.Navigator>
   );
 }
 
@@ -129,11 +150,16 @@ function MainNavigator() {
 }
 
 export default function RootNavigation() {
-  const { session, loading } = useAuth();
+  const { session, userProfile, loading } = useAuth();
 
+  // Show loading screen while auth state is being determined
   if (loading) {
     return <LoadingScreen />;
   }
+
+  // Determine if user needs location onboarding
+  const needsLocationOnboarding =
+    session && userProfile && !userProfile.location;
 
   return (
     <NavigationContainer
@@ -168,13 +194,27 @@ export default function RootNavigation() {
       }}
     >
       <RootStack.Navigator
-        key={session ? 'main' : 'auth'}
+        key={
+          session
+            ? needsLocationOnboarding
+              ? 'location-onboarding'
+              : 'main'
+            : 'auth'
+        }
         screenOptions={{ headerShown: false }}
       >
-        {session ? (
-          <RootStack.Screen name="Main" component={MainNavigator} />
-        ) : (
+        {!session ? (
+          // User not authenticated - show auth flow
           <RootStack.Screen name="Auth" component={AuthNavigator} />
+        ) : needsLocationOnboarding ? (
+          // User authenticated but needs location setup
+          <RootStack.Screen
+            name="LocationOnboarding"
+            component={OnboardingNavigator}
+          />
+        ) : (
+          // User authenticated and has location - show main app
+          <RootStack.Screen name="Main" component={MainNavigator} />
         )}
       </RootStack.Navigator>
     </NavigationContainer>

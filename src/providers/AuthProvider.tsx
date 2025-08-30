@@ -36,6 +36,11 @@ type ProfileError = {
   code?: string;
 };
 
+type LocationData = {
+  latitude: number;
+  longitude: number;
+};
+
 type AuthContextType = {
   session: Session | null;
   user: User | null;
@@ -50,6 +55,7 @@ type AuthContextType = {
   updateProfile: (
     updates: Partial<UserProfile>,
   ) => Promise<ProfileError | null>;
+  storeUserLocation: (location: LocationData) => Promise<ProfileError | null>;
   completeOnboarding: (profileData: {
     postcode: string;
     council_area: string;
@@ -118,7 +124,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
-      return data as UserProfile;
+      // Convert PostGIS geography to our location format
+      let location = null;
+      if (data.location) {
+        // PostGIS returns geography as "POINT(longitude latitude)"
+        const match = data.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
+        if (match) {
+          location = {
+            longitude: parseFloat(match[1]),
+            latitude: parseFloat(match[2]),
+          };
+        }
+      }
+
+      return {
+        ...data,
+        location,
+      } as UserProfile;
     } catch {
       return null;
     }
@@ -269,10 +291,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
+      // Handle location conversion for PostGIS
+      const updateData: any = {
+        ...updates,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Convert location to PostGIS POINT format if provided
+      if (updates.location) {
+        updateData.location = `POINT(${updates.location.longitude} ${updates.location.latitude})`;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', session.user.id);
+
+      if (error) {
+        return {
+          message: error.message,
+          code: error.code,
+        };
+      }
+
+      const updatedProfile = await fetchUserProfile(session.user.id);
+      setUserProfile(updatedProfile);
+
+      return null;
+    } catch {
+      return { message: 'Failed to update profile' };
+    }
+  };
+
+  const storeUserLocation = async (
+    location: LocationData,
+  ): Promise<ProfileError | null> => {
+    if (!session?.user) {
+      return { message: 'No authenticated user' };
+    }
+
+    try {
       const { error } = await supabase
         .from('profiles')
         .update({
-          ...updates,
+          location: `POINT(${location.longitude} ${location.latitude})`,
           updated_at: new Date().toISOString(),
         })
         .eq('id', session.user.id);
@@ -289,7 +351,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return null;
     } catch {
-      return { message: 'Failed to update profile' };
+      return { message: 'Failed to store location' };
     }
   };
 
@@ -352,6 +414,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         sendPasswordResetEmail,
         resetPassword,
         updateProfile,
+        storeUserLocation,
         completeOnboarding,
         refreshSession,
       }}
