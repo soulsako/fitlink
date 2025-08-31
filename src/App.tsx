@@ -1,9 +1,11 @@
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'expo-status-bar';
+import * as WebBrowser from 'expo-web-browser';
+// import { useEffect } from 'react';
 import LoadingScreen from '@/components/loading-screen';
 import { useFonts } from '@/hooks/use-fonts';
 import RootNavigation from '@/navigation/root-navigation';
 import { AuthProvider } from '@/providers/auth-provider';
-import { StatusBar } from 'expo-status-bar';
-import * as WebBrowser from 'expo-web-browser';
 import { LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
