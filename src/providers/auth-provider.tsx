@@ -22,11 +22,16 @@ type UserProfile = {
   postcode?: string;
   council_area?: string;
   phone_number?: string;
+  street?: string;
+  suburb?: string;
+  state?: string;
+  country?: string;
   location?: {
     latitude: number;
     longitude: number;
   };
   onboarding_completed: boolean;
+  preferences?: Record<string, any>;
   created_at: string;
   updated_at: string;
 };
@@ -57,6 +62,7 @@ type AuthContextType = {
   ) => Promise<ProfileError | null>;
   refreshSession: () => Promise<void>;
   storeUserLocation: (location: LocationData) => Promise<ProfileError | null>;
+  hasCompletedOnboarding: () => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,33 +79,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async (): Promise<void> => {
     try {
-      // Ensure local session is cleared immediately so UI updates right away
       await supabase.auth.signOut({ scope: 'local' });
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     try {
-      // Best-effort: revoke refresh token on the server
       await supabase.auth.signOut({ scope: 'global' });
-    } catch {
-      // ignore; local sign-out already handled
-    }
+    } catch {}
 
     try {
-      // Remove only Supabase auth keys to avoid nuking unrelated app data
       const keys = await AsyncStorage.getAllKeys();
       const sbKeys = keys.filter((k) => k.startsWith('sb-'));
       if (sbKeys.length) {
         await AsyncStorage.multiRemove(sbKeys);
       }
     } catch {
-      // Fallback: clear everything if targeted removal fails
       try {
         await AsyncStorage.clear();
-      } catch {
-        // ignore
-      }
+      } catch {}
     } finally {
       setSession(null);
       setUserProfile(null);
@@ -118,10 +114,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
-      // Convert PostGIS geography to our location format
       let location = null;
       if (data.location) {
-        // PostGIS returns geography as "POINT(longitude latitude)"
         const match = data.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
         if (match) {
           location = {
@@ -198,10 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             redirectTo: `${window.location.origin}/auth/callback`,
           },
         });
-        if (error) {
-          return error;
-        }
-        return null;
+        return error || null;
       } else {
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
@@ -214,9 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         });
 
-        if (error) {
-          return error;
-        }
+        if (error) return error;
 
         if (data?.url) {
           const result = await WebBrowser.openAuthSessionAsync(
@@ -244,18 +233,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 access_token: accessToken,
                 refresh_token: refreshToken || '',
               });
-              if (sessionError) {
-                return sessionError;
-              }
+              if (sessionError) return sessionError;
               return null;
             }
           }
 
           await new Promise((r) => setTimeout(r, 1000));
           const { data: sessionData } = await supabase.auth.getSession();
-          if (sessionData.session) {
-            return null;
-          }
+          if (sessionData.session) return null;
         }
 
         return { message: 'Google sign in failed' } as AuthError;
@@ -275,9 +260,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword = async (password: string): Promise<AuthError | null> => {
-    const { error } = await supabase.auth.updateUser({
-      password: password,
-    });
+    const { error } = await supabase.auth.updateUser({ password });
     return error;
   };
 
@@ -289,13 +272,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      // Handle location conversion for PostGIS
       const updateData: any = {
         ...updates,
         updated_at: new Date().toISOString(),
       };
 
-      // Convert location to PostGIS POINT format if provided
       if (updates.location) {
         updateData.location = `POINT(${updates.location.longitude} ${updates.location.latitude})`;
       }
@@ -306,10 +287,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', session.user.id);
 
       if (error) {
-        return {
-          message: error.message,
-          code: error.code,
-        };
+        return { message: error.message, code: error.code };
       }
 
       const updatedProfile = await fetchUserProfile(session.user.id);
@@ -338,10 +316,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', session.user.id);
 
       if (error) {
-        return {
-          message: error.message,
-          code: error.code,
-        };
+        return { message: error.message, code: error.code };
       }
 
       const updatedProfile = await fetchUserProfile(session.user.id);
@@ -356,6 +331,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshSession = async (): Promise<void> => {
     await supabase.auth.refreshSession();
   };
+
+  const hasCompletedOnboarding = useCallback(async (): Promise<boolean> => {
+    if (!session?.user) return false;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('onboarding_completed')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error) {
+        console.error('Onboarding check error:', error);
+        return false;
+      }
+
+      return data?.onboarding_completed || false;
+    } catch (err) {
+      console.error('Onboarding check error:', err);
+      return false;
+    }
+  }, [session]);
 
   return (
     <AuthContext.Provider
@@ -373,6 +370,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateProfile,
         storeUserLocation,
         refreshSession,
+        hasCompletedOnboarding,
       }}
     >
       {children}

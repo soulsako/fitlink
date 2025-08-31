@@ -4,14 +4,12 @@ import PrimaryButton from '@/components/ui/primary-button';
 import ProgressIndicator from '@/components/ui/progress-indicator';
 import ThemedText from '@/components/ui/themed-text';
 import { useAddress } from '@/hooks/use-address';
-import { isAuthenticated } from '@/services/auth';
 import { theme } from '@/styles/theme';
 import type { OnboardingStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import {
-  Alert,
   FlatList,
   Keyboard,
   Modal,
@@ -47,8 +45,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
     isValid,
   } = useAddress();
 
-  console.log('manualAddress', manualAddress);
-
   useEffect(() => {
     if (coordinates) {
       reverseGeocode(coordinates);
@@ -70,25 +66,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
   const handleConfirmAddress = async (): Promise<void> => {
     try {
       setSaving(true);
-      const isAuth = await isAuthenticated();
-
-      if (!isAuth) {
-        Alert.alert(
-          'Sign In Required',
-          'Please sign in to save your address and continue.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Sign In',
-              onPress: () => {
-                console.log('Navigate to sign in');
-              },
-            },
-          ],
-        );
-        return;
-      }
-
       const success = await saveAddress(coordinates);
       if (success) {
         console.log('Address saved successfully');
@@ -372,7 +349,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                       color={theme.colors.white}
                     />
                   </View>
-                  <View style={styles.errorText}>
+                  {/* <View style={styles.errorText}>
                     <ThemedText
                       variant="body"
                       size="medium"
@@ -388,7 +365,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                     >
                       Please enter your address instead.
                     </ThemedText>
-                  </View>
+                  </View> */}
                   <TouchableOpacity style={styles.errorClose}>
                     <MaterialIcons
                       name="close"

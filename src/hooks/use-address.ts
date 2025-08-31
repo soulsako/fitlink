@@ -138,9 +138,6 @@ export const useAddress = () => {
     return true;
   }, [manualAddress]);
 
-  /**
-   * Format final address for submission
-   */
   const getFormattedAddress = useCallback((): AddressUpdateData => {
     const formattedPostcode = geocodingService.formatUKPostcode(
       manualAddress.postcode,
@@ -151,7 +148,7 @@ export const useAddress = () => {
       suburb: manualAddress.suburb.trim(),
       postcode: formattedPostcode,
       state: manualAddress.state.trim(),
-      country: manualAddress.country,
+      country: manualAddress.country.trim(),
       formattedAddress:
         `${manualAddress.street}, ${manualAddress.suburb}, ${manualAddress.state} ${formattedPostcode}, ${manualAddress.country}`
           .replace(/\s+/g, ' ')

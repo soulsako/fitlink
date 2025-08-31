@@ -19,9 +19,13 @@ export interface Profile {
   email?: string;
   full_name?: string;
   avatar_url?: string;
+  phone_number?: string;
+  street?: string;
+  suburb?: string;
+  state?: string;
+  country?: string;
   postcode?: string;
   council_area?: string;
-  phone_number?: string;
   location?: {
     lat: number;
     lng: number;
@@ -108,8 +112,13 @@ class DatabaseService {
       const user = session.user;
 
       const updateData: Partial<Profile> = {
+        street: addressData.street,
+        suburb: addressData.suburb,
+        state: addressData.state,
+        country: addressData.country,
         postcode: addressData.postcode,
-        council_area: addressData.state, // Using state as council_area
+        council_area: addressData.state, // optional mapping
+        onboarding_completed: true,
         updated_at: new Date().toISOString(),
       };
 
