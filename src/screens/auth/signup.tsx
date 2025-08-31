@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
@@ -42,6 +42,27 @@ export default function SignUpScreen({ navigation }: Props) {
       fullName: '',
     },
   });
+
+  // 🔎 Debug theme values before render
+  useEffect(() => {
+    if (isNaN(theme.fontSizes.base)) {
+      Alert.alert('Debug', 'theme.fontSizes.base is NaN or undefined');
+    } else {
+      Alert.alert('Debug', `theme.fontSizes.base = ${theme.fontSizes.base}`);
+    }
+
+    if (isNaN(theme.spacing.sm)) {
+      Alert.alert('Debug', 'theme.spacing.sm is NaN or undefined');
+    } else {
+      Alert.alert('Debug', `theme.spacing.sm = ${theme.spacing.sm}`);
+    }
+
+    if (isNaN(theme.borderRadius.md)) {
+      Alert.alert('Debug', 'theme.borderRadius.md is NaN or undefined');
+    } else {
+      Alert.alert('Debug', `theme.borderRadius.md = ${theme.borderRadius.md}`);
+    }
+  }, []);
 
   const onSignUp = async (data: SignUpFormData) => {
     setLoading(true);
@@ -145,7 +166,6 @@ export default function SignUpScreen({ navigation }: Props) {
                       autoCapitalize="words"
                       autoComplete="name"
                       returnKeyType="done"
-                      submitBehavior="blurAndSubmit"
                       multiline={false}
                       onSubmitEditing={() => Keyboard.dismiss()}
                       left={
@@ -164,6 +184,11 @@ export default function SignUpScreen({ navigation }: Props) {
                           borderColor: theme.colors.inputBorderError,
                         },
                       ]}
+                      contentStyle={{
+                        fontFamily: theme.fonts.regular,
+                        fontSize: theme.fontSizes.base,
+                        paddingHorizontal: theme.spacing.sm,
+                      }}
                     />
                     {errors.fullName && (
                       <ThemedText
@@ -196,7 +221,6 @@ export default function SignUpScreen({ navigation }: Props) {
                       autoCapitalize="none"
                       autoComplete="email"
                       returnKeyType="done"
-                      submitBehavior="blurAndSubmit"
                       multiline={false}
                       onSubmitEditing={() => Keyboard.dismiss()}
                       left={
@@ -215,6 +239,11 @@ export default function SignUpScreen({ navigation }: Props) {
                           borderColor: theme.colors.inputBorderError,
                         },
                       ]}
+                      contentStyle={{
+                        fontFamily: theme.fonts.regular,
+                        fontSize: theme.fontSizes.base,
+                        paddingHorizontal: theme.spacing.sm,
+                      }}
                     />
                     {errors.email && (
                       <ThemedText
@@ -246,7 +275,6 @@ export default function SignUpScreen({ navigation }: Props) {
                       secureTextEntry={!showPassword}
                       autoComplete="new-password"
                       returnKeyType="done"
-                      submitBehavior="blurAndSubmit"
                       multiline={false}
                       onSubmitEditing={() => Keyboard.dismiss()}
                       left={
@@ -271,6 +299,11 @@ export default function SignUpScreen({ navigation }: Props) {
                           borderColor: theme.colors.inputBorderError,
                         },
                       ]}
+                      contentStyle={{
+                        fontFamily: theme.fonts.regular,
+                        fontSize: theme.fontSizes.base,
+                        paddingHorizontal: theme.spacing.sm,
+                      }}
                     />
                     {errors.password && (
                       <ThemedText
@@ -299,7 +332,6 @@ export default function SignUpScreen({ navigation }: Props) {
                       onChangeText={onChange}
                       onBlur={onBlur}
                       returnKeyType="done"
-                      submitBehavior="blurAndSubmit"
                       multiline={false}
                       onSubmitEditing={() => Keyboard.dismiss()}
                       error={!!errors.confirmPassword}
@@ -329,6 +361,11 @@ export default function SignUpScreen({ navigation }: Props) {
                           borderColor: theme.colors.inputBorderError,
                         },
                       ]}
+                      contentStyle={{
+                        fontFamily: theme.fonts.regular,
+                        fontSize: theme.fontSizes.base,
+                        paddingHorizontal: theme.spacing.sm,
+                      }}
                     />
                     {errors.confirmPassword && (
                       <ThemedText
