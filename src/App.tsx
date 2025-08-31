@@ -30,6 +30,18 @@ function AppContent() {
 }
 
 export default function App() {
+  // useEffect(() => {
+  //   const clearStorage = async () => {
+  //     try {
+  //       await AsyncStorage.clear();
+  //       console.log('✅ AsyncStorage cleared completely');
+  //     } catch (error) {
+  //       console.error('❌ Failed to clear AsyncStorage', error);
+  //     }
+  //   };
+
+  //   clearStorage();
+  // }, []);
   return (
     <SafeAreaProvider>
       <AppContent />

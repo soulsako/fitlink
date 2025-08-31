@@ -20,7 +20,6 @@ export type OnboardingStackParamList = {
 
 // Main Tab Stack - Updated for LocalMind features
 export type MainTabParamList = {
-  Home: undefined;
   Services: undefined;
   Messages: undefined;
   Profile: undefined;
@@ -30,7 +29,7 @@ export type MainTabParamList = {
 export type RootStackParamList = {
   Auth: undefined;
   LocationOnboarding: undefined;
-  Main: undefined;
+  Services: undefined;
 };
 
 // Screen Props

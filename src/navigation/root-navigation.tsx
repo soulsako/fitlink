@@ -152,14 +152,15 @@ function MainNavigator() {
 export default function RootNavigation() {
   const { session, userProfile, loading } = useAuth();
 
-  // ✅ Show loading screen until we know both session AND userProfile
   if (loading || (session && !userProfile)) {
     return <LoadingScreen />;
   }
 
-  // Determine if user needs location onboarding
+  // ✅ Must complete BOTH location & onboarding
   const needsLocationOnboarding =
-    session && userProfile && !userProfile.location;
+    session &&
+    userProfile &&
+    (!userProfile.location || !userProfile.onboarding_completed);
 
   return (
     <NavigationContainer
@@ -204,16 +205,13 @@ export default function RootNavigation() {
         screenOptions={{ headerShown: false }}
       >
         {!session ? (
-          // User not authenticated - show auth flow
           <RootStack.Screen name="Auth" component={AuthNavigator} />
         ) : needsLocationOnboarding ? (
-          // User authenticated but needs location setup
           <RootStack.Screen
             name="LocationOnboarding"
             component={OnboardingNavigator}
           />
         ) : (
-          // User authenticated and has location - show main app
           <RootStack.Screen name="Main" component={MainNavigator} />
         )}
       </RootStack.Navigator>

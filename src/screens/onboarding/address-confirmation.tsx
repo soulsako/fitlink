@@ -5,8 +5,14 @@ import ProgressIndicator from '@/components/ui/progress-indicator';
 import ThemedText from '@/components/ui/themed-text';
 import { useAddress } from '@/hooks/use-address';
 import { theme } from '@/styles/theme';
-import type { OnboardingStackScreenProps } from '@/types/navigation';
+import { supabase } from '@/supabase/supabase';
+import type {
+  OnboardingStackScreenProps,
+  RootStackParamList,
+} from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import {
@@ -31,6 +37,9 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [saving, setSaving] = useState(false);
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const {
     loading,
@@ -66,9 +75,31 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
   const handleConfirmAddress = async (): Promise<void> => {
     try {
       setSaving(true);
+
       const success = await saveAddress(coordinates);
       if (success) {
-        console.log('Address saved successfully');
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          const { error } = await supabase
+            .from('profiles')
+            .update({
+              onboarding_completed: true,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', user.id);
+
+          if (error) {
+            console.error('Error updating onboarding status:', error);
+          }
+        }
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Services' }],
+        });
       }
     } catch (error) {
       console.error('Error confirming address:', error);
@@ -153,13 +184,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
         {searchResults.length > 0 && (
           <FlatList
             data={searchResults}
-            keyExtractor={(item, index) => {
-              const id =
-                typeof item.display_name === 'object'
-                  ? item.display_name.id
-                  : `${index}`;
-              return id || `${index}`;
-            }}
+            keyExtractor={(item, index) => `${item.display_name}-${index}`}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.searchResultItem}
@@ -178,9 +203,9 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                       color="textPrimary"
                       style={styles.searchResultTitle}
                     >
-                      {typeof item.display_name === 'object'
-                        ? item.display_name.address
-                        : String(item.display_name)}
+                      {typeof item.display_name === 'string'
+                        ? item.display_name
+                        : ''}
                     </ThemedText>
                   </View>
                 </View>
@@ -277,15 +302,15 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               onChangeText={(text: string) =>
                 updateManualAddressField('street', text)
               }
-              placeholder="2 Mile Lane"
+              placeholder="1226 University Drive"
             />
 
-            {/* <InputField
+            <InputField
               label="Apt, suite, unit (if applicable)"
               value=""
               onChangeText={(_text: string) => {}}
               placeholder=""
-            /> */}
+            />
 
             <InputField
               label="City / town"
@@ -297,7 +322,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
             />
 
             <InputField
-              label="State"
+              label="State / territory"
               value={manualAddress.state}
               onChangeText={(text: string) =>
                 updateManualAddressField('state', text)
@@ -306,7 +331,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
             />
 
             <InputField
-              label="Postcode"
+              label="ZIP code"
               value={manualAddress.postcode}
               onChangeText={(text: string) =>
                 updateManualAddressField('postcode', text)
@@ -316,7 +341,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               maxLength={8}
             />
 
-            {/* <View style={styles.locationToggle}>
+            <View style={styles.locationToggle}>
               <View style={styles.locationToggleContent}>
                 <ThemedText
                   variant="body"
@@ -337,7 +362,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                 </ThemedText>
               </View>
               <View style={styles.toggleSwitch} />
-            </View> */}
+            </View>
 
             {!coordinates && (
               <Surface style={styles.errorContainer} elevation={0}>
@@ -349,7 +374,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                       color={theme.colors.white}
                     />
                   </View>
-                  {/* <View style={styles.errorText}>
+                  <View style={styles.errorText}>
                     <ThemedText
                       variant="body"
                       size="medium"
@@ -365,7 +390,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                     >
                       Please enter your address instead.
                     </ThemedText>
-                  </View> */}
+                  </View>
                   <TouchableOpacity style={styles.errorClose}>
                     <MaterialIcons
                       name="close"
@@ -376,6 +401,17 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                 </View>
               </Surface>
             )}
+
+            <View style={styles.mapContainer}>
+              <ThemedText
+                variant="body"
+                size="small"
+                color="textSecondary"
+                style={styles.mapPlaceholder}
+              >
+                We'll show your exact location here
+              </ThemedText>
+            </View>
           </View>
         )}
       </ScrollView>
