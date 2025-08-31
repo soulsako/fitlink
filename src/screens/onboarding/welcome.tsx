@@ -1,7 +1,7 @@
-import ScreenBackground from '@/components/ScreenBackground';
-import SocialButton from '@/components/ui/SocialButton';
-import ThemedText from '@/components/ui/ThemedText';
-import { useAuth } from '@/providers/AuthProvider';
+import ScreenBackground from '@/components/screen-background';
+import SocialButton from '@/components/ui/social-button';
+import ThemedText from '@/components/ui/themed-text';
+import { useAuth } from '@/providers/auth-provider';
 import theme from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';

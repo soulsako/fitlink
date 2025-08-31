@@ -11,8 +11,8 @@ import {
   useState,
 } from 'react';
 import { Platform } from 'react-native';
-import { supabase } from '../lib/supabase';
-import type { SignUpFormData } from '../schemas/authSchemas';
+import type { SignUpFormData } from '../schemas/auth-schemas';
+import { supabase } from '../supabase/supabase';
 
 type UserProfile = {
   id: string;
@@ -31,14 +31,14 @@ type UserProfile = {
   updated_at: string;
 };
 
-type ProfileError = {
-  message: string;
-  code?: string;
-};
-
 type LocationData = {
   latitude: number;
   longitude: number;
+};
+
+type ProfileError = {
+  message: string;
+  code?: string;
 };
 
 type AuthContextType = {
@@ -55,14 +55,8 @@ type AuthContextType = {
   updateProfile: (
     updates: Partial<UserProfile>,
   ) => Promise<ProfileError | null>;
-  storeUserLocation: (location: LocationData) => Promise<ProfileError | null>;
-  completeOnboarding: (profileData: {
-    postcode: string;
-    council_area: string;
-    phone_number: string;
-    location?: { latitude: number; longitude: number };
-  }) => Promise<ProfileError | null>;
   refreshSession: () => Promise<void>;
+  storeUserLocation: (location: LocationData) => Promise<ProfileError | null>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -250,14 +244,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 access_token: accessToken,
                 refresh_token: refreshToken || '',
               });
-              if (sessionError) return sessionError;
+              if (sessionError) {
+                return sessionError;
+              }
               return null;
             }
           }
 
           await new Promise((r) => setTimeout(r, 1000));
           const { data: sessionData } = await supabase.auth.getSession();
-          if (sessionData.session) return null;
+          if (sessionData.session) {
+            return null;
+          }
         }
 
         return { message: 'Google sign in failed' } as AuthError;
@@ -355,47 +353,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const completeOnboarding = async (profileData: {
-    postcode: string;
-    council_area: string;
-    phone_number: string;
-    location?: { latitude: number; longitude: number };
-  }): Promise<ProfileError | null> => {
-    if (!session?.user) {
-      return { message: 'No authenticated user' };
-    }
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          postcode: profileData.postcode,
-          council_area: profileData.council_area,
-          phone_number: profileData.phone_number,
-          location: profileData.location
-            ? `POINT(${profileData.location.longitude} ${profileData.location.latitude})`
-            : null,
-          onboarding_completed: true,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', session.user.id);
-
-      if (error) {
-        return {
-          message: error.message,
-          code: error.code,
-        };
-      }
-
-      const updatedProfile = await fetchUserProfile(session.user.id);
-      setUserProfile(updatedProfile);
-
-      return null;
-    } catch {
-      return { message: 'Failed to complete onboarding' };
-    }
-  };
-
   const refreshSession = async (): Promise<void> => {
     await supabase.auth.refreshSession();
   };
@@ -415,7 +372,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         resetPassword,
         updateProfile,
         storeUserLocation,
-        completeOnboarding,
         refreshSession,
       }}
     >

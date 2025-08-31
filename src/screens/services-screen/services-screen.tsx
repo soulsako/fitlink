@@ -1,5 +1,5 @@
-import PrimaryButton from '@/components/ui/PrimaryButton';
-import { useAuth } from '@/providers/AuthProvider';
+import PrimaryButton from '@/components/ui/primary-button';
+import { useAuth } from '@/providers/auth-provider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CommonActions } from '@react-navigation/native';
 import type React from 'react';

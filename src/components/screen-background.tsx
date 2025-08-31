@@ -19,7 +19,7 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({
   source,
   children,
   overlayOpacity = 0.1,
-  overlayColor = 'rgba(0, 0, 0, 0.0.20)',
+  overlayColor = `rgba(0, 0, 0, 0.2)`,
   style,
 }) => {
   return (
@@ -36,7 +36,7 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({
           },
         ]}
       />
-      {children}
+      <View style={styles.content}>{children}</View>
     </ImageBackground>
   );
 };
@@ -44,9 +44,15 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
+    position: 'relative',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: 0,
+  },
+  content: {
+    flex: 1,
+    zIndex: 1,
   },
 });
 

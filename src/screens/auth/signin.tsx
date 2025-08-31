@@ -1,9 +1,9 @@
-import ScreenBackground from '@/components/ScreenBackground';
-import BackButton from '@/components/ui/BackButton';
-import SocialButton from '@/components/ui/SocialButton';
-import ThemedText from '@/components/ui/ThemedText';
-import { useAuth } from '@/providers/AuthProvider';
-import { type SignInFormData, signInSchema } from '@/schemas/authSchemas';
+import ScreenBackground from '@/components/screen-background';
+import BackButton from '@/components/ui/back-button';
+import SocialButton from '@/components/ui/social-button';
+import ThemedText from '@/components/ui/themed-text';
+import { useAuth } from '@/providers/auth-provider';
+import { type SignInFormData, signInSchema } from '@/schemas/auth-schemas';
 import { theme } from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontSize: theme.fontSizes['4xl'],
+    fontSize: theme.fontSizes.xl4,
     textAlign: 'center',
     marginBottom: theme.spacing.md,
     letterSpacing: -0.5,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.xl,
   },
   formContainer: {
-    marginBottom: theme.spacing['2xl'],
+    marginBottom: theme.spacing.xl2,
   },
   inputContainer: {
     marginBottom: theme.spacing.md,

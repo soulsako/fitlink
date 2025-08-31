@@ -14,10 +14,10 @@ export const fontSizes = {
   base: 16,
   lg: 18,
   xl: 20,
-  '2xl': 24,
-  '3xl': 28,
-  '4xl': 32,
-  '5xl': 36,
+  xl2: 24, // Changed from '2xl'
+  xl3: 28, // Changed from '3xl'
+  xl4: 32, // Changed from '4xl'
+  xl5: 36, // Changed from '5xl'
 };
 
 export const lineHeights = {
@@ -26,10 +26,10 @@ export const lineHeights = {
   base: 24,
   lg: 28,
   xl: 32,
-  '2xl': 36,
-  '3xl': 40,
-  '4xl': 44,
-  '5xl': 48,
+  xl2: 36, // Changed from '2xl'
+  xl3: 40, // Changed from '3xl'
+  xl4: 44, // Changed from '4xl'
+  xl5: 48, // Changed from '5xl'
 };
 
 // --------------------------------------------------
@@ -179,7 +179,7 @@ export const colors = {
   badgeWarning: '#F59E0B',
   badgeError: '#EF4444',
   badgeNeutral: '#6B7280',
-};
+} as const;
 
 // --------------------------------------------------
 // Spacing & Layout
@@ -190,9 +190,9 @@ export const spacing = {
   md: 16,
   lg: 24,
   xl: 32,
-  '2xl': 48,
-  '3xl': 64,
-};
+  xl2: 48, // Changed from '2xl'
+  xl3: 64, // Changed from '3xl'
+} as const;
 
 export const borderRadius = {
   none: 0,
@@ -200,10 +200,10 @@ export const borderRadius = {
   md: 8,
   lg: 12,
   xl: 16,
-  '2xl': 20,
-  '3xl': 24,
+  xl2: 20, // Changed from '2xl'
+  xl3: 24, // Changed from '3xl'
   full: 9999,
-};
+} as const;
 
 // --------------------------------------------------
 // Theme Interface

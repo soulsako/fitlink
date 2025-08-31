@@ -16,16 +16,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
-import BackButton from '@/components/ui/BackButton';
-import ThemedText from '@/components/ui/ThemedText';
-import { theme } from '@/styles/theme';
-import { buildInputTheme } from '@/utils/paperInputTheme';
-import { useAuth } from '../../providers/AuthProvider';
+import BackButton from '@/components/ui/back-button';
+import ThemedText from '@/components/ui/themed-text';
+import { useAuth } from '@/providers/auth-provider';
 import {
   type ResetPasswordFormData,
   resetPasswordSchema,
-} from '../../schemas/authSchemas';
-import type { AuthStackScreenProps } from '../../types/navigation';
+} from '@/schemas/auth-schemas';
+import { theme } from '@/styles/theme';
+import type { AuthStackScreenProps } from '@/types/navigation';
+import { buildInputTheme } from '@/utils/paper-input-theme';
 
 type Props = AuthStackScreenProps<'ResetPassword'>;
 
@@ -291,8 +291,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontSize: theme.fontSizes['4xl'],
-    lineHeight: theme.lineHeights['4xl'],
+    fontSize: theme.fontSizes.xl4,
+    lineHeight: theme.lineHeights.xl4,
     textAlign: 'center',
     marginBottom: theme.spacing.md,
     letterSpacing: -0.5,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.xl,
   },
   formContainer: {
-    marginBottom: theme.spacing['2xl'],
+    marginBottom: theme.spacing.xl2,
   },
   inputContainer: {
     marginBottom: theme.spacing.md,

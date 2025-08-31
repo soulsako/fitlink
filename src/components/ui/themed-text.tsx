@@ -28,22 +28,22 @@ const ThemedText: React.FC<ThemedTextProps> = ({
   style,
   ...props
 }) => {
-  const getFontSize = () => {
+  const getFontSize = (): number => {
     const sizeMap = {
       display: {
-        small: theme.fontSizes['3xl'],
-        medium: theme.fontSizes['4xl'],
-        large: theme.fontSizes['5xl'],
+        small: theme.fontSizes.xl3, // Was '3xl'
+        medium: theme.fontSizes.xl4, // Was '4xl'
+        large: theme.fontSizes.xl5, // Was '5xl'
       },
       headline: {
-        small: theme.fontSizes['2xl'],
-        medium: theme.fontSizes['3xl'],
-        large: theme.fontSizes['4xl'],
+        small: theme.fontSizes.xl2, // Was '2xl'
+        medium: theme.fontSizes.xl3, // Was '3xl'
+        large: theme.fontSizes.xl4, // Was '4xl'
       },
       title: {
         small: theme.fontSizes.lg,
         medium: theme.fontSizes.xl,
-        large: theme.fontSizes['2xl'],
+        large: theme.fontSizes.xl2, // Was '2xl'
       },
       body: {
         small: theme.fontSizes.sm,
@@ -59,22 +59,22 @@ const ThemedText: React.FC<ThemedTextProps> = ({
     return sizeMap[variant][size];
   };
 
-  const getLineHeight = () => {
+  const getLineHeight = (): number => {
     const lineHeightMap = {
       display: {
-        small: theme.lineHeights['3xl'],
-        medium: theme.lineHeights['4xl'],
-        large: theme.lineHeights['5xl'],
+        small: theme.lineHeights.xl3, // Was '3xl'
+        medium: theme.lineHeights.xl4, // Was '4xl'
+        large: theme.lineHeights.xl5, // Was '5xl'
       },
       headline: {
-        small: theme.lineHeights['2xl'],
-        medium: theme.lineHeights['3xl'],
-        large: theme.lineHeights['4xl'],
+        small: theme.lineHeights.xl2, // Was '2xl'
+        medium: theme.lineHeights.xl3, // Was '3xl'
+        large: theme.lineHeights.xl4, // Was '4xl'
       },
       title: {
         small: theme.lineHeights.lg,
         medium: theme.lineHeights.xl,
-        large: theme.lineHeights['2xl'],
+        large: theme.lineHeights.xl2, // Was '2xl'
       },
       body: {
         small: theme.lineHeights.sm,
@@ -90,7 +90,7 @@ const ThemedText: React.FC<ThemedTextProps> = ({
     return lineHeightMap[variant][size];
   };
 
-  const getColorValue = () => {
+  const getColorValue = (): string => {
     switch (color) {
       case 'primary':
         return theme.colors.primary;
@@ -117,7 +117,7 @@ const ThemedText: React.FC<ThemedTextProps> = ({
     }
   };
 
-  const getFontFamily = () => {
+  const getFontFamily = (): string => {
     switch (weight) {
       case 'medium':
         return theme.fonts.medium;

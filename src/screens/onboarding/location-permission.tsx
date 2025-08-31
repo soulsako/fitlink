@@ -1,7 +1,8 @@
-import PrimaryButton from '@/components/ui/PrimaryButton';
-import ProgressIndicator from '@/components/ui/ProgressIndicator';
-import ThemedText from '@/components/ui/ThemedText';
-import { useAuth } from '@/providers/AuthProvider';
+import ScreenBackground from '@/components/screen-background';
+import PrimaryButton from '@/components/ui/primary-button';
+import ProgressIndicator from '@/components/ui/progress-indicator';
+import ThemedText from '@/components/ui/themed-text';
+import { useAuth } from '@/providers/auth-provider';
 import { theme } from '@/styles/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -76,53 +77,57 @@ const LocationPermissionScreen: React.FC<LocationPermissionScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ProgressIndicator currentStep={1} totalSteps={3} />
-      <View style={styles.content}>
-        <View style={styles.textContainer}>
-          <ThemedText
-            variant="headline"
-            size="large"
-            weight="bold"
-            style={[styles.title, { color: theme.colors.textPrimary }]}
-          >
-            Turn On Location for Smarter Results
-          </ThemedText>
-          <ThemedText
-            variant="body"
-            size="medium"
-            style={[styles.subtitle, { color: theme.colors.textSecondary }]}
-          >
-            By sharing your location, LocalMind's AI can give you the most
-            accurate, local information and suggestions tailored to your area.
-          </ThemedText>
-        </View>
+    <ScreenBackground
+      source={require('../../../assets/images/backgrounds/welcome-light.png')}
+    >
+      <SafeAreaView style={styles.container}>
+        <ProgressIndicator currentStep={1} totalSteps={3} />
+        <View style={styles.content}>
+          <View style={styles.textContainer}>
+            <ThemedText
+              variant="headline"
+              size="large"
+              weight="bold"
+              style={[styles.title, { color: theme.colors.textPrimary }]}
+            >
+              Turn On Location for Smarter Results
+            </ThemedText>
+            <ThemedText
+              variant="body"
+              size="medium"
+              style={[styles.subtitle, { color: theme.colors.textSecondary }]}
+            >
+              By sharing your location, LocalMind's AI can give you the most
+              accurate, local information and suggestions tailored to your area.
+            </ThemedText>
+          </View>
 
-        <View style={styles.iconContainer}>
-          <MaterialIcons
-            name="location-on"
-            size={150}
-            color={theme.colors.primary}
-          />
-        </View>
+          <View style={styles.iconContainer}>
+            <MaterialIcons
+              name="location-on"
+              size={150}
+              color={theme.colors.primary}
+            />
+          </View>
 
-        <View style={styles.buttonContainer}>
-          <PrimaryButton
-            title="Continue"
-            onPress={requestLocationPermission}
-            loading={requesting}
-            style={styles.primaryButton}
-          />
+          <View style={styles.buttonContainer}>
+            <PrimaryButton
+              title="Continue"
+              onPress={requestLocationPermission}
+              loading={requesting}
+              style={styles.primaryButton}
+            />
 
-          <PrimaryButton
-            title="Enter address manually"
-            onPress={skipLocationAccess}
-            mode="text"
-            style={styles.skipButton}
-          />
+            <PrimaryButton
+              title="Enter address manually"
+              onPress={skipLocationAccess}
+              mode="text"
+              style={styles.skipButton}
+            />
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScreenBackground>
   );
 };
 
@@ -142,8 +147,8 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.xl,
   },
   title: {
-    fontSize: theme.fontSizes['3xl'],
-    lineHeight: theme.lineHeights['3xl'],
+    fontSize: theme.fontSizes.xl3,
+    lineHeight: theme.lineHeights.xl3,
     textAlign: 'center',
     marginBottom: theme.spacing.md,
     letterSpacing: -0.5,

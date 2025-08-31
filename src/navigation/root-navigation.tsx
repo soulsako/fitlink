@@ -1,19 +1,19 @@
-import ServicesScreen from '@/screens/ServicesScreen/ServicesScreen';
+import ServicesScreen from '@/screens/services-screen/services-screen';
 import { theme } from '@/styles/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoadingScreen from '../components/LoadingScreen';
-import { useAuth } from '../providers/AuthProvider';
-import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
-import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
-import SignInScreen from '../screens/auth/SignInScreen';
-import SignUpScreen from '../screens/auth/SignUpScreen';
-import MessagesScreen from '../screens/MessagesScreen/MessagesScreen';
-import AddressConfirmationScreen from '../screens/onboarding/AddressConfirmationScreen';
-import LocationPermissionScreen from '../screens/onboarding/LocationPermissionScreen';
-import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
+import LoadingScreen from '../components/loading-screen';
+import { useAuth } from '../providers/auth-provider';
+import ForgotPasswordScreen from '../screens/auth/forgot-password';
+import ResetPasswordScreen from '../screens/auth/reset-password';
+import SignInScreen from '../screens/auth/signin';
+import SignUpScreen from '../screens/auth/signup';
+import MessagesScreen from '../screens/message/message';
+import AddressConfirmationScreen from '../screens/onboarding/address-confirmation';
+import LocationPermissionScreen from '../screens/onboarding/location-permission';
+import WelcomeScreen from '../screens/onboarding/welcome';
 import type {
   AuthStackParamList,
   MainTabParamList,

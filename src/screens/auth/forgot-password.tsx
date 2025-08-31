@@ -11,14 +11,14 @@ import {
 import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ScreenBackground from '@/components/ScreenBackground';
-import BackButton from '@/components/ui/BackButton';
-import ThemedText from '@/components/ui/ThemedText';
-import { useAuth } from '@/providers/AuthProvider';
+import ScreenBackground from '@/components/screen-background';
+import BackButton from '@/components/ui/back-button';
+import ThemedText from '@/components/ui/themed-text';
+import { useAuth } from '@/providers/auth-provider';
 import {
   type ForgotPasswordFormData,
   forgotPasswordSchema,
-} from '@/schemas/authSchemas';
+} from '@/schemas/auth-schemas';
 import { theme } from '@/styles/theme';
 import type { AuthStackScreenProps } from '@/types/navigation';
 
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontSize: theme.fontSizes['4xl'],
+    fontSize: theme.fontSizes.xl4,
     textAlign: 'center',
     marginBottom: theme.spacing.md,
     letterSpacing: -0.5,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.xl,
   },
   formContainer: {
-    marginBottom: theme.spacing['2xl'],
+    marginBottom: theme.spacing.xl2,
   },
   inputContainer: {
     marginBottom: theme.spacing.md,
