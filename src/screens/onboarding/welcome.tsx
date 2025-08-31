@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontSize: theme.fontSizes['4xl'],
+    fontSize: theme.fontSizes.xl4,
     textAlign: 'center',
     marginBottom: theme.spacing.md,
     letterSpacing: -0.5,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
   },
   buttonContainer: {
-    marginBottom: theme.spacing['3xl'],
+    marginBottom: theme.spacing.xl3,
     gap: theme.spacing.sm,
   },
   socialButton: {
