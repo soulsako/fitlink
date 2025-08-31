@@ -4,7 +4,13 @@ import RootNavigation from '@/navigation/root-navigation';
 import { AuthProvider } from '@/providers/auth-provider';
 import { StatusBar } from 'expo-status-bar';
 import * as WebBrowser from 'expo-web-browser';
+import { LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+LogBox.ignoreLogs([
+  'RemoteTextInput', // filters out sessionID logs
+  'TextInputUI',
+]);
 
 WebBrowser.maybeCompleteAuthSession(); // <-- only here
 

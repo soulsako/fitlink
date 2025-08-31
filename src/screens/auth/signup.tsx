@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
@@ -42,27 +42,6 @@ export default function SignUpScreen({ navigation }: Props) {
       fullName: '',
     },
   });
-
-  // 🔎 Debug theme values before render
-  useEffect(() => {
-    if (isNaN(theme.fontSizes.base)) {
-      Alert.alert('Debug', 'theme.fontSizes.base is NaN or undefined');
-    } else {
-      Alert.alert('Debug', `theme.fontSizes.base = ${theme.fontSizes.base}`);
-    }
-
-    if (isNaN(theme.spacing.sm)) {
-      Alert.alert('Debug', 'theme.spacing.sm is NaN or undefined');
-    } else {
-      Alert.alert('Debug', `theme.spacing.sm = ${theme.spacing.sm}`);
-    }
-
-    if (isNaN(theme.borderRadius.md)) {
-      Alert.alert('Debug', 'theme.borderRadius.md is NaN or undefined');
-    } else {
-      Alert.alert('Debug', `theme.borderRadius.md = ${theme.borderRadius.md}`);
-    }
-  }, []);
 
   const onSignUp = async (data: SignUpFormData) => {
     setLoading(true);

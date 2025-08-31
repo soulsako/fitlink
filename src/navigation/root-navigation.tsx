@@ -152,8 +152,8 @@ function MainNavigator() {
 export default function RootNavigation() {
   const { session, userProfile, loading } = useAuth();
 
-  // Show loading screen while auth state is being determined
-  if (loading) {
+  // ✅ Show loading screen until we know both session AND userProfile
+  if (loading || (session && !userProfile)) {
     return <LoadingScreen />;
   }
 

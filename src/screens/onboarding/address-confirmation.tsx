@@ -4,7 +4,7 @@ import PrimaryButton from '@/components/ui/primary-button';
 import ProgressIndicator from '@/components/ui/progress-indicator';
 import ThemedText from '@/components/ui/themed-text';
 import { useAddress } from '@/hooks/use-address';
-import { AuthService } from '@/services/auth';
+import { isAuthenticated } from '@/services/auth';
 import { theme } from '@/styles/theme';
 import type { OnboardingStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -71,7 +71,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
       setSaving(true);
 
       // Check authentication before attempting to save
-      const isAuth = await AuthService.isAuthenticated();
+      const isAuth = await isAuthenticated();
       if (!isAuth) {
         Alert.alert(
           'Sign In Required',
