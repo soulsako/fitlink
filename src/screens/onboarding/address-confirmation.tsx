@@ -47,7 +47,8 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
     isValid,
   } = useAddress();
 
-  // Auto-detect address from coordinates
+  console.log('manualAddress', manualAddress);
+
   useEffect(() => {
     if (coordinates) {
       reverseGeocode(coordinates);
@@ -69,23 +70,17 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
   const handleConfirmAddress = async (): Promise<void> => {
     try {
       setSaving(true);
-
-      // Check authentication before attempting to save
       const isAuth = await isAuthenticated();
+
       if (!isAuth) {
         Alert.alert(
           'Sign In Required',
           'Please sign in to save your address and continue.',
           [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
+            { text: 'Cancel', style: 'cancel' },
             {
               text: 'Sign In',
-              onPress: (): void => {
-                // Navigate to sign in screen
-                // navigation.navigate('SignIn');
+              onPress: () => {
                 console.log('Navigate to sign in');
               },
             },
@@ -95,11 +90,8 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
       }
 
       const success = await saveAddress(coordinates);
-
       if (success) {
-        // Navigate to next screen
         console.log('Address saved successfully');
-        // navigation.navigate('NextScreen');
       }
     } catch (error) {
       console.error('Error confirming address:', error);
@@ -168,42 +160,59 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
           </View>
         )}
 
-        <FlatList
-          data={searchResults}
-          keyExtractor={(item, index) => `${item.lat}-${item.lon}-${index}`}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.searchResultItem}
-              onPress={() => handleSelectSearchResult(item)}
+        {searchQuery.length >= 3 &&
+          searchResults.length === 0 &&
+          !searchLoading && (
+            <ThemedText
+              variant="body"
+              size="small"
+              color="textSecondary"
+              style={{ textAlign: 'center', marginTop: theme.spacing.md }}
             >
-              <View style={styles.searchResultContent}>
-                <MaterialIcons
-                  name="location-on"
-                  size={20}
-                  color={theme.colors.textSecondary}
-                />
-                <View style={styles.searchResultText}>
-                  <ThemedText
-                    variant="body"
-                    size="medium"
-                    color="textPrimary"
-                    style={styles.searchResultTitle}
-                  >
-                    {item.address.road && item.address.house_number
-                      ? `${item.address.house_number} ${item.address.road}`
-                      : item.address.road || item.display_name.split(',')[0]}
-                  </ThemedText>
-                  <ThemedText variant="body" size="small" color="textSecondary">
-                    {item.address.town || item.address.city},{' '}
-                    {item.address.postcode}
-                  </ThemedText>
-                </View>
-              </View>
-            </TouchableOpacity>
+              No addresses found.
+            </ThemedText>
           )}
-          style={styles.searchResultsList}
-          showsVerticalScrollIndicator={false}
-        />
+
+        {searchResults.length > 0 && (
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item, index) => {
+              const id =
+                typeof item.display_name === 'object'
+                  ? item.display_name.id
+                  : `${index}`;
+              return id || `${index}`;
+            }}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.searchResultItem}
+                onPress={() => handleSelectSearchResult(item)}
+              >
+                <View style={styles.searchResultContent}>
+                  <MaterialIcons
+                    name="location-on"
+                    size={20}
+                    color={theme.colors.textSecondary}
+                  />
+                  <View style={styles.searchResultText}>
+                    <ThemedText
+                      variant="body"
+                      size="medium"
+                      color="textPrimary"
+                      style={styles.searchResultTitle}
+                    >
+                      {typeof item.display_name === 'object'
+                        ? item.display_name.address
+                        : String(item.display_name)}
+                    </ThemedText>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+            style={styles.searchResultsList}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </SafeAreaView>
     </Modal>
   );
@@ -239,7 +248,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
           </View>
         ) : (
           <View style={styles.formContainer}>
-            {/* Country/Region Field */}
             <TouchableOpacity style={styles.countryField}>
               <View style={styles.countryContent}>
                 <View>
@@ -267,7 +275,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               </View>
             </TouchableOpacity>
 
-            {/* Search Button */}
             <TouchableOpacity
               style={styles.searchButton}
               onPress={() => setShowSearchModal(true)}
@@ -287,22 +294,21 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               </ThemedText>
             </TouchableOpacity>
 
-            {/* Manual Address Fields */}
             <InputField
               label="Street address"
               value={manualAddress.street}
               onChangeText={(text: string) =>
                 updateManualAddressField('street', text)
               }
-              placeholder="1226 University Drive"
+              placeholder="2 Mile Lane"
             />
 
-            <InputField
+            {/* <InputField
               label="Apt, suite, unit (if applicable)"
               value=""
               onChangeText={(_text: string) => {}}
               placeholder=""
-            />
+            /> */}
 
             <InputField
               label="City / town"
@@ -314,7 +320,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
             />
 
             <InputField
-              label="State / territory"
+              label="State"
               value={manualAddress.state}
               onChangeText={(text: string) =>
                 updateManualAddressField('state', text)
@@ -323,7 +329,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
             />
 
             <InputField
-              label="ZIP code"
+              label="Postcode"
               value={manualAddress.postcode}
               onChangeText={(text: string) =>
                 updateManualAddressField('postcode', text)
@@ -333,8 +339,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               maxLength={8}
             />
 
-            {/* Location Toggle */}
-            <View style={styles.locationToggle}>
+            {/* <View style={styles.locationToggle}>
               <View style={styles.locationToggleContent}>
                 <ThemedText
                   variant="body"
@@ -354,12 +359,9 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                   show your exact location on the map.
                 </ThemedText>
               </View>
-              <View style={styles.toggleSwitch}>
-                {/* Toggle implementation would go here */}
-              </View>
-            </View>
+              <View style={styles.toggleSwitch} />
+            </View> */}
 
-            {/* Location Error Message */}
             {!coordinates && (
               <Surface style={styles.errorContainer} elevation={0}>
                 <View style={styles.errorContent}>
@@ -397,18 +399,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                 </View>
               </Surface>
             )}
-
-            {/* Map placeholder */}
-            <View style={styles.mapContainer}>
-              <ThemedText
-                variant="body"
-                size="small"
-                color="textSecondary"
-                style={styles.mapPlaceholder}
-              >
-                We'll show your exact location here
-              </ThemedText>
-            </View>
           </View>
         )}
       </ScrollView>
@@ -551,8 +541,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.buttonPrimary,
     borderRadius: theme.borderRadius.md,
   },
-
-  // Modal Styles
   modalContainer: {
     flex: 1,
     backgroundColor: theme.colors.background,

@@ -12,9 +12,9 @@ export interface AuthUser {
  */
 export async function isAuthenticated(): Promise<boolean> {
   try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
+    console.log('data', data);
     return !!session?.user;
   } catch (error) {
     console.error('Auth check error:', error);

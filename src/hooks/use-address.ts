@@ -51,8 +51,7 @@ export const useAddress = () => {
         console.log('No address found for coordinates');
         return null;
       }
-    } catch (error) {
-      console.error('Reverse geocoding error:', error);
+    } catch {
       Alert.alert(
         'Unable to determine address',
         'Please search for your address manually.',

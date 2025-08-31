@@ -1,7 +1,3 @@
-const NOMINATIM_BASE_URL =
-  process.env.EXPO_PUBLIC_NOMINATIM_BASE_URL ||
-  'https://nominatim.openstreetmap.org';
-
 export interface Coordinates {
   latitude: number;
   longitude: number;
@@ -17,26 +13,29 @@ export interface AddressData {
 }
 
 export interface SearchResult {
-  display_name: string;
+  display_name: {
+    address: string;
+    url: string;
+    id: string;
+  };
   address: {
-    house_number?: string;
-    road?: string;
-    suburb?: string;
-    town?: string;
-    city?: string;
-    village?: string;
-    postcode?: string;
-    county?: string;
-    state?: string;
-    country?: string;
+    line: {
+      address: string;
+      url: string;
+      id: string;
+    };
   };
   lat: string;
   lon: string;
 }
 
+const NOMINATIM_BASE_URL =
+  process.env.EXPO_PUBLIC_NOMINATIM_BASE_URL ||
+  'https://nominatim.openstreetmap.org';
+
 class GeocodingService {
   /**
-   * Reverse geocode coordinates to get address (UK only)
+   * Reverse geocode coordinates using Nominatim
    */
   async reverseGeocode(coordinates: Coordinates): Promise<AddressData | null> {
     try {
@@ -45,6 +44,7 @@ class GeocodingService {
       );
 
       if (!response.ok) {
+        console.log('Reverse geocode response:', response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -61,36 +61,6 @@ class GeocodingService {
     }
   }
 
-  /**
-   * Search for addresses by query (UK only)
-   */
-  async searchAddresses(query: string): Promise<SearchResult[]> {
-    if (query.length < 3) {
-      return [];
-    }
-
-    try {
-      const response = await fetch(
-        `${NOMINATIM_BASE_URL}/search?format=json&q=${encodeURIComponent(
-          query,
-        )}&addressdetails=1&countrycodes=gb&limit=10`,
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const results = await response.json();
-      return Array.isArray(results) ? results : [];
-    } catch (error) {
-      console.error('Address search error:', error);
-      throw new Error('Failed to search addresses');
-    }
-  }
-
-  /**
-   * Parse address data from Nominatim result
-   */
   private parseAddressFromResult(result: any): AddressData {
     const addr = result.address || {};
 
@@ -110,10 +80,73 @@ class GeocodingService {
   }
 
   /**
+   * Search for addresses using getaddress.io autocomplete
+   */
+  async searchAddresses(query: string): Promise<SearchResult[]> {
+    if (query.length < 3) return [];
+
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_GETADDRESS_BASE_URL}/autocomplete/${encodeURIComponent(
+          query,
+        )}?api-key=${process.env.EXPO_PUBLIC_GETADDRESS_API_KEY}`,
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      // result.suggestions is already an array of objects with address/url/id
+      return (result.suggestions || []).map((suggestion: any) => ({
+        display_name: {
+          address: suggestion.address,
+          url: suggestion.url,
+          id: suggestion.id,
+        },
+        address: {
+          line: {
+            address: suggestion.address,
+            url: suggestion.url,
+            id: suggestion.id,
+          },
+        },
+        lat: '',
+        lon: '',
+      }));
+    } catch (error) {
+      console.error('Address search error:', error);
+      throw new Error('Failed to search addresses');
+    }
+  }
+
+  /**
    * Convert SearchResult to AddressData
    */
   searchResultToAddressData(result: SearchResult): AddressData {
-    return this.parseAddressFromResult(result);
+    return this.parseAddressFromString(result.display_name.address);
+  }
+
+  /**
+   * Parse simple string into AddressData
+   */
+  private parseAddressFromString(address: string): AddressData {
+    const parts = address.split(',').map((part) => part.trim());
+
+    const street = parts[0] || '';
+    const suburb = parts[1] || '';
+    const state = parts.length >= 4 ? parts[2] : '';
+    const postcode = parts.length >= 4 ? parts[3] : parts[2] || '';
+
+    return {
+      street,
+      suburb,
+      postcode,
+      state,
+      country: 'United Kingdom',
+      formattedAddress: address,
+    };
   }
 
   /**
@@ -142,15 +175,25 @@ class GeocodingService {
     address: string,
   ): Promise<Coordinates | null> {
     try {
-      const results = await this.searchAddresses(address);
-      if (results.length > 0) {
-        const first = results[0];
-        return {
-          latitude: parseFloat(first.lat),
-          longitude: parseFloat(first.lon),
-        };
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_GETADDRESS_BASE_URL}/find/${encodeURIComponent(
+          address,
+        )}?api-key=${process.env.EXPO_PUBLIC_GETADDRESS_API_KEY}`,
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return null;
+
+      const result = await response.json();
+      if (!result || !result.latitude || !result.longitude) {
+        return null;
+      }
+
+      return {
+        latitude: parseFloat(result.latitude),
+        longitude: parseFloat(result.longitude),
+      };
     } catch (error) {
       console.error('Error getting coordinates from address:', error);
       return null;
