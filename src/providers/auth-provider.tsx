@@ -62,7 +62,6 @@ type AuthContextType = {
   ) => Promise<ProfileError | null>;
   refreshSession: () => Promise<void>;
   storeUserLocation: (location: LocationData) => Promise<ProfileError | null>;
-  hasCompletedOnboarding: () => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -332,28 +331,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.refreshSession();
   };
 
-  const hasCompletedOnboarding = useCallback(async (): Promise<boolean> => {
-    if (!session?.user) return false;
-
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('onboarding_completed')
-        .eq('id', session.user.id)
-        .single();
-
-      if (error) {
-        console.error('Onboarding check error:', error);
-        return false;
-      }
-
-      return data?.onboarding_completed || false;
-    } catch (err) {
-      console.error('Onboarding check error:', err);
-      return false;
-    }
-  }, [session]);
-
   return (
     <AuthContext.Provider
       value={{
@@ -370,7 +347,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateProfile,
         storeUserLocation,
         refreshSession,
-        hasCompletedOnboarding,
       }}
     >
       {children}

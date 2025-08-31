@@ -5,14 +5,8 @@ import ProgressIndicator from '@/components/ui/progress-indicator';
 import ThemedText from '@/components/ui/themed-text';
 import { useAddress } from '@/hooks/use-address';
 import { theme } from '@/styles/theme';
-import { supabase } from '@/supabase/supabase';
-import type {
-  OnboardingStackScreenProps,
-  RootStackParamList,
-} from '@/types/navigation';
+import type { OnboardingStackScreenProps } from '@/types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import {
@@ -37,9 +31,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [saving, setSaving] = useState(false);
-
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const {
     loading,
@@ -76,31 +67,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
     try {
       setSaving(true);
 
-      const success = await saveAddress(coordinates);
-      if (success) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (user) {
-          const { error } = await supabase
-            .from('profiles')
-            .update({
-              onboarding_completed: true,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', user.id);
-
-          if (error) {
-            console.error('Error updating onboarding status:', error);
-          }
-        }
-
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Services' }],
-        });
-      }
+      await saveAddress(coordinates);
     } catch (error) {
       console.error('Error confirming address:', error);
     } finally {
@@ -184,7 +151,9 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
         {searchResults.length > 0 && (
           <FlatList
             data={searchResults}
-            keyExtractor={(item, index) => `${item.display_name}-${index}`}
+            keyExtractor={(item, index) =>
+              `${item.display_name?.id ?? index}-${index}`
+            }
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.searchResultItem}
@@ -203,9 +172,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                       color="textPrimary"
                       style={styles.searchResultTitle}
                     >
-                      {typeof item.display_name === 'string'
-                        ? item.display_name
-                        : ''}
+                      {item.display_name?.address ?? ''}
                     </ThemedText>
                   </View>
                 </View>
@@ -302,14 +269,7 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               onChangeText={(text: string) =>
                 updateManualAddressField('street', text)
               }
-              placeholder="1226 University Drive"
-            />
-
-            <InputField
-              label="Apt, suite, unit (if applicable)"
-              value=""
-              onChangeText={(_text: string) => {}}
-              placeholder=""
+              placeholder="2 Mile Lane"
             />
 
             <InputField
@@ -318,25 +278,25 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               onChangeText={(text: string) =>
                 updateManualAddressField('suburb', text)
               }
-              placeholder="Menlo Park"
+              placeholder="London"
             />
 
             <InputField
-              label="State / territory"
+              label="State"
               value={manualAddress.state}
               onChangeText={(text: string) =>
                 updateManualAddressField('state', text)
               }
-              placeholder="California"
+              placeholder="England"
             />
 
             <InputField
-              label="ZIP code"
+              label="Postcode"
               value={manualAddress.postcode}
               onChangeText={(text: string) =>
                 updateManualAddressField('postcode', text)
               }
-              placeholder="94025"
+              placeholder="SW19 5SW"
               keyboardType="default"
               maxLength={8}
             />

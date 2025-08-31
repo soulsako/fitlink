@@ -42,7 +42,6 @@ export interface AddressUpdateData {
   postcode: string;
   state: string;
   country: string;
-  formattedAddress: string;
   coordinates?: {
     latitude: number;
     longitude: number;
@@ -85,72 +84,6 @@ class DatabaseService {
     } catch (error) {
       console.error('Error fetching user profile:', error);
       return null;
-    }
-  }
-
-  /**
-   * Update user's address information
-   */
-  async updateUserAddress(addressData: AddressUpdateData): Promise<boolean> {
-    try {
-      // Check authentication status
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        throw new Error('Authentication error');
-      }
-
-      if (!session || !session.user) {
-        console.error('No active session or user');
-        throw new Error('Please sign in to save your address');
-      }
-
-      const user = session.user;
-
-      const updateData: Partial<Profile> = {
-        street: addressData.street,
-        suburb: addressData.suburb,
-        state: addressData.state,
-        country: addressData.country,
-        postcode: addressData.postcode,
-        council_area: addressData.state, // optional mapping
-        onboarding_completed: true,
-        updated_at: new Date().toISOString(),
-      };
-
-      // If coordinates are provided, create PostGIS point
-      if (addressData.coordinates) {
-        const { data, error } = await supabase.rpc('update_user_location', {
-          user_id: user.id,
-          lat: addressData.coordinates.latitude,
-          lng: addressData.coordinates.longitude,
-          user_postcode: addressData.postcode,
-          user_council_area: addressData.state,
-        });
-
-        if (error) {
-          throw error;
-        }
-      } else {
-        // Update without location
-        const { error } = await supabase
-          .from('profiles')
-          .update(updateData)
-          .eq('id', user.id);
-
-        if (error) {
-          throw error;
-        }
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error updating user address:', error);
-      return false;
     }
   }
 

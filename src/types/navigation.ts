@@ -29,7 +29,7 @@ export type MainTabParamList = {
 export type RootStackParamList = {
   Auth: undefined;
   LocationOnboarding: undefined;
-  Services: undefined;
+  Main: undefined;
 };
 
 // Screen Props

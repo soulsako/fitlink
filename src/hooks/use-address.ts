@@ -1,10 +1,12 @@
-import { type AddressUpdateData, databaseService } from '@/services/database';
+import { useAuth } from '@/providers/auth-provider';
+import type { AddressUpdateData } from '@/services/database';
 import {
   type AddressData,
   type Coordinates,
   geocodingService,
   type SearchResult,
 } from '@/services/geocoding';
+import { supabase } from '@/supabase/supabase';
 import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -28,6 +30,7 @@ export const useAddress = () => {
     state: '',
     country: 'United Kingdom',
   });
+  const { updateProfile } = useAuth();
 
   /**
    * Reverse geocode coordinates to get address
@@ -149,12 +152,6 @@ export const useAddress = () => {
       postcode: formattedPostcode,
       state: manualAddress.state.trim(),
       country: manualAddress.country.trim(),
-      formattedAddress:
-        `${manualAddress.street}, ${manualAddress.suburb}, ${manualAddress.state} ${formattedPostcode}, ${manualAddress.country}`
-          .replace(/\s+/g, ' ')
-          .replace(/^,\s*/, '')
-          .replace(/,\s*,/g, ',')
-          .trim(),
     };
   }, [manualAddress]);
 
@@ -164,26 +161,52 @@ export const useAddress = () => {
   const saveAddress = useCallback(
     async (coordinates?: Coordinates): Promise<boolean> => {
       try {
+        // Check authentication status
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          throw new Error('Authentication error');
+        }
+
+        if (!session || !session.user) {
+          console.error('No active session or user');
+          throw new Error('Please sign in to save your address');
+        }
+
+        const user = session.user;
+
         if (!validateAddress()) {
           return false;
         }
 
-        const addressToSave = getFormattedAddress();
+        const addressToSave = {
+          ...getFormattedAddress(),
+          council_area: manualAddress.state,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString(),
+        };
 
         if (coordinates) {
+          const { error } = await supabase.rpc('update_user_location', {
+            user_id: user.id,
+            lat: coordinates.latitude,
+            lng: coordinates.longitude,
+            user_postcode: addressToSave.postcode,
+            user_council_area: addressToSave.state,
+          });
+
+          if (error) {
+            throw error;
+          }
+
           addressToSave.coordinates = coordinates;
         }
 
-        const success = await databaseService.updateUserAddress(addressToSave);
-
-        if (!success) {
-          Alert.alert(
-            'Save Error',
-            'Failed to save your address. Please try again.',
-            [{ text: 'OK' }],
-          );
-          return false;
-        }
+        await updateProfile(addressToSave);
 
         return true;
       } catch (error: any) {
@@ -209,7 +232,7 @@ export const useAddress = () => {
         return false;
       }
     },
-    [validateAddress, getFormattedAddress],
+    [validateAddress, getFormattedAddress, updateProfile, manualAddress.state],
   );
 
   /**
