@@ -186,6 +186,8 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
     </Modal>
   );
 
+  console.log('manualAddress', manualAddress);
+
   return (
     <SafeAreaView style={styles.container}>
       <ProgressIndicator currentStep={2} totalSteps={3} />
@@ -301,29 +303,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
               maxLength={8}
             />
 
-            <View style={styles.locationToggle}>
-              <View style={styles.locationToggleContent}>
-                <ThemedText
-                  variant="body"
-                  size="medium"
-                  color="textPrimary"
-                  weight="medium"
-                >
-                  Show your specific location
-                </ThemedText>
-                <ThemedText
-                  variant="body"
-                  size="small"
-                  color="textSecondary"
-                  style={styles.locationDescription}
-                >
-                  Make it clear to guests where your place is located. We'll
-                  show your exact location on the map.
-                </ThemedText>
-              </View>
-              <View style={styles.toggleSwitch} />
-            </View>
-
             {!coordinates && (
               <Surface style={styles.errorContainer} elevation={0}>
                 <View style={styles.errorContent}>
@@ -361,17 +340,6 @@ const AddressConfirmationScreen: React.FC<AddressConfirmationScreenProps> = ({
                 </View>
               </Surface>
             )}
-
-            <View style={styles.mapContainer}>
-              <ThemedText
-                variant="body"
-                size="small"
-                color="textSecondary"
-                style={styles.mapPlaceholder}
-              >
-                We'll show your exact location here
-              </ThemedText>
-            </View>
           </View>
         )}
       </ScrollView>

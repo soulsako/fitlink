@@ -78,6 +78,7 @@ export const useAddress = () => {
     try {
       setSearchLoading(true);
       const results = await geocodingService.searchAddresses(query);
+      console.log('Search results:', results);
       setSearchResults(results);
     } catch (error) {
       console.error('Address search error:', error);
